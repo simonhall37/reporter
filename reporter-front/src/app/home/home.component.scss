@@ -1,0 +1,13 @@
+@import '../../variables';
+
+.main {
+
+  border-left-width: medium;
+  border-left-style: solid;
+  border-right-width: medium;
+  border-right-style: solid;
+  border-color: $primary;
+  padding: 20px;
+  background-color: white;
+  width: 90%;
+}

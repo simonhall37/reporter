@@ -1,0 +1,29 @@
+@import '../../variables';
+
+label {
+  padding: 10px;
+}
+
+.login {
+  padding: 30px;
+  border-style: solid;
+  border-width: think;
+  border-radius: 25px;
+  border-color: $primary;
+  background-color: white;
+  max-width: 500px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.warning {
+  color: red;
+}
+
+.btn-primary {
+  background-color: $primary;
+}
+
+.btn-primary:hover {
+  background-color: darken($primary,20);
+}

@@ -1,0 +1,31 @@
+<div class="row align-items-center h-100">
+    <div class="col-6 mx-auto center login">
+      <h1>Login
+        <i class="fas fa-user-lock"></i>
+      </h1>
+      <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
+          <div *ngIf="badCred">
+            <p class="warning">Username or password incorrect</p>
+          </div>
+          <div [ngClass]="{ 'has-error': f.submitted && !username.valid }">
+              <label for="username">Username</label>
+              <input type="text"
+                name="username" [(ngModel)]="model.username"
+                  #username="ngModel" required />
+              <div *ngIf="f.submitted
+                && !username.valid" class="warning">Username is required</div>
+          </div>
+          <div [ngClass]="{ 'has-error': f.submitted && !password.valid }">
+              <label for="password">Password</label>
+              <input type="password"
+                name="password" [(ngModel)]="model.password"
+                  #password="ngModel" required />
+              <div *ngIf="f.submitted
+                && !password.valid" class="warning">Password is required</div>
+          </div>
+          <div>
+              <button class="btn btn-primary" [disabled]="loading">Login</button>
+          </div>
+      </form>
+    </div>
+</div>
