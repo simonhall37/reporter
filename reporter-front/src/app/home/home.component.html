@@ -1,10 +1,51 @@
+<div class="align-items-center h-100">
+  <header >
+    <nav class="mx-auto navbar navbar-expand-md navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Reporter</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a routerLink="/lookups" routerLinkActive="active" class="nav-link">
+                Lookups
+              </a>
+            </li>
+            <li class="nav-item">
+              <a routerLink="/" class="nav-link">
+                TBC1
+              </a>
+            </li>
+            <li class="nav-item">
+              <a routerLink="/" class="nav-link">
+                TBC2
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+               <i class="fas fa-user-circle fa-2x"></i>
+             </a>
+             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+               <a class="dropdown-item" href="#">Details</a>
+               <div class="dropdown-divider"></div>
+               <a class="dropdown-item" [routerLink]="['/login']">Logout</a>
+             </div>
+           </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
 
-<div class="row align-items-center h-100">
+  <div class="mx-auto center main">
 
-    <div class="mx-auto center main h-100">
-      <h1>
-        Welcome from {{message}}
-      </h1>
-      <p><a [routerLink]="['/login']">Logout</a></p>
+    <!-- <div class="loading" *ngIf="loading">
+      <h1>Loading <i class="fas fa-spinner fa-pulse"></i></h1>
+    </div>
+    <div *ngIf="!loading"> -->
+      <router-outlet></router-outlet>
+    <!-- </div> -->
   </div>
 </div>

@@ -12,7 +12,7 @@ export class ApiService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public getMessage():Observable<any>{
-    return this.httpClient.get<any>(API+'message');
+  public getObject(adr: string):Observable<any>{
+    return this.httpClient.get<any>(API+ adr);
   }
 }

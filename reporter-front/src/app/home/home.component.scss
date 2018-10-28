@@ -1,7 +1,12 @@
 @import '../../variables';
 
-.main {
+.outer {
+  display: flex;
+  flex-flow: column;
+}
 
+.main {
+  height: calc(100% - 60px);
   border-left-width: medium;
   border-left-style: solid;
   border-right-width: medium;
@@ -10,4 +15,14 @@
   padding: 20px;
   background-color: white;
   width: 90%;
+}
+
+.bg-dark {
+  background-color: $primary !important;
+  width:90%;
+  height: 60px;
+}
+
+.nav-item {
+  padding-right: 25px;
 }

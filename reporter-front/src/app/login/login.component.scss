@@ -16,12 +16,20 @@ label {
   padding-bottom: 50px;
 }
 
+.row {
+  margin:0px;
+}
+
 .warning {
   color: red;
 }
 
 .btn-primary {
   background-color: $primary;
+}
+
+.login-btn {
+  padding: 10px;
 }
 
 .btn-primary:hover {

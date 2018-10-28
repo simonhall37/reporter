@@ -7,12 +7,14 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import {BasicAuthInterceptor} from './security/basic.auth.interceptor';
+import { LookupComponent } from './lookup/lookup.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    HomeComponent
+    HomeComponent,
+    LookupComponent
   ],
   imports: [
     BrowserModule,

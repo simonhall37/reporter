@@ -13,7 +13,6 @@ export class BasicAuthInterceptor implements HttpInterceptor {
                     Authorization: `Basic ${currentUser.authdata}`
                 }
             });
-            console.log("Setting auth header!  Basic " + currentUser.authdata);
         }
 
         return next.handle(request);
