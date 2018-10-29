@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.simon.wa.domain.ApiObject;
 import com.simon.wa.domain.MappingMetadata;
@@ -29,26 +30,24 @@ public class MappingService {
 
 		final ObjectNode node = om.readValue(input, ObjectNode.class);
 		final List<ApiObject> out = new ArrayList<>();
+		final List<String> location = new ArrayList<>();
 
-		Iterator<Entry<String, JsonNode>> root = node.fields();
-		ApiObject rootObj = null;
-		if (meta.getItemName().equalsIgnoreCase("")) {
-			rootObj = new ApiObject("root");
-			out.add(rootObj);
-		}
-		while (root.hasNext()) {
+		Iterator<Entry<String, JsonNode>> rootNode = node.fields();
+		ApiObject rootObj = new ApiObject("root");
+		out.add(rootObj);
+		while (rootNode.hasNext()) {
 			
-			Entry<String, JsonNode> e = root.next();
+			Entry<String, JsonNode> e = rootNode.next();
 			if (e.getKey().equalsIgnoreCase(meta.getItemName()) && e.getValue().isArray()) {
+				location.add(meta.getItemName());
 				Iterator<JsonNode> targetObj = e.getValue().elements();
 				while (targetObj.hasNext()) {		
 					Iterator<Entry<String, JsonNode>> innerNodes = targetObj.next().fields();
-					out.add(checkNodes(innerNodes,meta));
+					checkNodes(innerNodes,meta,location,rootObj);
 				}
 			}
-			else if (rootObj!=null) {
-				rootObj.setName("root");
-				if (meta.getFieldsToKeep().contains(e.getKey())){
+			else {
+				if (meta.getFieldsToKeep().keySet().contains(e.getKey())){
 					rootObj.addField(e.getKey(), e.getValue().asText());
 				}
 				
@@ -58,23 +57,36 @@ public class MappingService {
 		return out;
 	}
 	
-	private ApiObject checkNodes(Iterator<Entry<String, JsonNode>> innerNodes, MappingMetadata meta) {
+	private String locToString(List<String> location) {
+		StringBuilder sb = new StringBuilder();
+		for (String part : location) {
+			sb.append(part + ".");
+		}
+		return sb.toString().substring(0,sb.length()-1);
+	}
+	
+	private void checkNodes(Iterator<Entry<String, JsonNode>> innerNodes, MappingMetadata meta,List<String> location,ApiObject parent) {
 		
-		ApiObject obj = new ApiObject(meta.getItemName());
+		ApiObject obj = new ApiObject(locToString(location));
 		while (innerNodes.hasNext()) {
 			
 			Entry<String, JsonNode> pair = innerNodes.next();
+//			System.out.println("Checking: " + locToString(location) + "." + pair.getKey() + ": " + pair.getValue().asText());
 			
-//			System.out.println(pair.getKey() + ": " + pair.getValue().getNodeType());
+			if (pair.getValue().getNodeType().equals(JsonNodeType.OBJECT)) {
+				location.add(pair.getKey());
+				checkNodes(pair.getValue().fields(),meta,location,obj);
+				location.remove(pair.getKey());
+			}
 			
-			if (pair.getKey().equalsIgnoreCase(meta.getPathToId()))
+			if (meta.getPathToId().equalsIgnoreCase(locToString(location) + "." + pair.getKey()))
 				obj.setId(pair.getValue().asLong());
-			else if (pair.getKey().equalsIgnoreCase(meta.getPathToName()))
-				obj.setName(pair.getValue().asText());
-			if (meta.getFieldsToKeep().contains(pair.getKey()))
+//			else if (meta.getPathToName().equalsIgnoreCase(locToString(location) + "." + pair.getKey()))
+//				obj.setName(pair.getValue().asText());
+			if (meta.getFieldsToKeep().keySet().contains(locToString(location) + "." + pair.getKey()))
 				obj.addField(pair.getKey(), pair.getValue().asText());
 		}
-		return obj;
+		parent.addChild(obj);
 	}
 	
 	

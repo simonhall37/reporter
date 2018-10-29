@@ -1,25 +1,28 @@
 package com.simon.wa.domain;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MappingMetadata {
 
 	private String itemName;
 	private String pathToId;
-	private String pathToName;
-	private List<String> fieldsToKeep;
+	private Map<String,String> fieldsToKeep;
 	
 	public MappingMetadata() {}
 	
-	public MappingMetadata(String itemName, String pathToId, String pathToName, List<String> fieldsToKeep) {
+	public MappingMetadata(String itemName, String pathToId) {
 		this.itemName = itemName;
 		this.pathToId = pathToId;
-		this.pathToName = pathToName;
-		this.fieldsToKeep = fieldsToKeep;
+		this.fieldsToKeep = new HashMap<String,String>();
 	}
 	
-	public boolean addField(String name) {
-		return this.fieldsToKeep.add(name);
+	public void addField(String keyAndValue) {
+		this.fieldsToKeep.put(keyAndValue, keyAndValue);
+	}
+	
+	public void addField(String key,String value) {
+		this.fieldsToKeep.put(key,value);
 	}
 
 	public String getItemName() {
@@ -38,19 +41,11 @@ public class MappingMetadata {
 		this.pathToId = pathToId;
 	}
 
-	public String getPathToName() {
-		return pathToName;
-	}
-
-	public void setPathToName(String pathToName) {
-		this.pathToName = pathToName;
-	}
-
-	public List<String> getFieldsToKeep() {
+	public Map<String,String> getFieldsToKeep() {
 		return fieldsToKeep;
 	}
 
-	public void setFieldsToKeep(List<String> fieldsToKeep) {
+	public void setFieldsToKeep(Map<String,String> fieldsToKeep) {
 		this.fieldsToKeep = fieldsToKeep;
 	}
 	

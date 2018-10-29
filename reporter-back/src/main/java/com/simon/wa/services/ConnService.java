@@ -57,7 +57,7 @@ public class ConnService {
 		return url.toString();
 	}
 
-	public List<ApiObject> getResponse(MappingMetadata meta, Map<String,String> params) {
+	public List<ApiObject> getResponse(MappingMetadata meta, Map<String,String> params,int hardLimit) {
 
 		List<ApiObject> out = new ArrayList<>();
 		if (this.apikey.length() == 0)
@@ -69,12 +69,18 @@ public class ConnService {
 		
 		int total_count = this.getTotalCount(initialResponse);
 		int iterations = ((Double)Math.ceil(total_count/this.LIMIT)).intValue();
-		log.info("Total Count: " + total_count + ", need " + iterations + " iterations");
+		log.info("Total Count: " + total_count + ", need " + (iterations+1) + " iterations");
 		
-		for (int i = 0; i<=iterations;i++) {
+		for (int i = 0; i<=Math.min(iterations,hardLimit);i++) {
 			try {
 				params.put("offset", String.valueOf(i*this.LIMIT));
-				out.addAll(this.mapService.parseObject(getResponseAsString(buildUrl(meta.getItemName(), params,this.LIMIT)), meta));
+				List<ApiObject> temp = this.mapService.parseObject(getResponseAsString(buildUrl(meta.getItemName(), params,this.LIMIT)), meta);
+				int count = 0;
+				for (ApiObject child : temp.get(0).getChildren()) {
+					out.add(child);
+					count++;
+				}
+				log.info("Extracted " + count + " from " + this.URL + params);
 			} catch (IOException e) {
 				log.error("Error extracting objects",e);
 			}
@@ -95,9 +101,8 @@ public class ConnService {
 	}
 	
 	private Integer getTotalCount(String input) {
-		List<String> fields = new ArrayList<>();
-		fields.add("total_count");
-		MappingMetadata countMeta = new MappingMetadata("","total_count","total_count",fields);
+		MappingMetadata countMeta = new MappingMetadata("","total_count");
+		countMeta.addField("total_count");
 		try {
 			List<ApiObject> c = this.mapService.parseObject(input,countMeta);
 			if (c.size() == 1) {
