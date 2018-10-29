@@ -10,17 +10,18 @@ public class ApiObject {
 	private long id;
 	private Set<ApiObjectField> fields = new HashSet<>();
 	private Set<ApiObject> children = new HashSet<>();
-	
-	public ApiObject() {}
-	
+
+	public ApiObject() {
+	}
+
 	public ApiObject(String type) {
 		this.type = type;
 	}
-	
+
 	public boolean addField(String key, String value) {
-		return this.fields.add(new ApiObjectField(key,value));
+		return this.fields.add(new ApiObjectField(key, value));
 	}
-	
+
 	public boolean addChild(ApiObject child) {
 		return this.children.add(child);
 	}
@@ -31,6 +32,19 @@ public class ApiObject {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getValue(String fieldName, Class<T> output) {
+		for (ApiObjectField field : this.fields) {
+			if (field.getKey().equalsIgnoreCase(fieldName)) {
+				if (output.getSimpleName().equalsIgnoreCase("integer"))
+					return (T) Integer.valueOf(field.getValue());
+				else if (output.getSimpleName().equalsIgnoreCase("sring"))
+					return (T) field.getValue();
+			}
+		}
+		return null;
 	}
 
 	public long getId() {
@@ -64,5 +78,5 @@ public class ApiObject {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+
 }

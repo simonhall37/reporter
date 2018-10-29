@@ -1,7 +1,7 @@
 package com.simon.wa;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -21,7 +21,6 @@ import com.simon.wa.domain.Lookup;
 import com.simon.wa.domain.MappingMetadata;
 import com.simon.wa.services.ConnService;
 import com.simon.wa.services.LookupRepository;
-import com.simon.wa.services.MappingService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200",methods = {RequestMethod.OPTIONS,RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
@@ -35,8 +34,6 @@ public class ReporterBackApplication {
 	
 	@Autowired
 	private ConnService connService;
-	@Autowired
-	private MappingService mapService;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(ReporterBackApplication.class, args);
@@ -77,15 +74,9 @@ public class ReporterBackApplication {
 		fields.add("mail");
 		fields.add("firstname");
 		fields.add("lastname");
-		MappingMetadata user = new MappingMetadata("users","id","login",fields);
-		List<String> response = this.connService.getResponse(user.getItemName(), new ArrayList<>());
-		
-//		try {
-//			List<ApiObject> objs = this.mapService.parseObject(response, user);
-//			objs.stream().forEach(o -> log.info(o.getId() + ": " + o.getName()));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		MappingMetadata user = new MappingMetadata("users","id","login",fields);		
+		List<ApiObject> response = this.connService.getResponse(user, new HashMap<>());
+		response.stream().forEach(o -> log.info(o.getId() + ": " + o.getName()));
 		
 	}
 
