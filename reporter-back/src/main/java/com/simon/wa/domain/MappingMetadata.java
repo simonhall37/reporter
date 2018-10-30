@@ -8,6 +8,8 @@ public class MappingMetadata {
 	private String itemName;
 	private String pathToId;
 	private Map<String,String> fieldsToKeep;
+	private int size;
+	private String lastUpdated;
 	
 	public MappingMetadata() {}
 	
@@ -47,6 +49,22 @@ public class MappingMetadata {
 
 	public void setFieldsToKeep(Map<String,String> fieldsToKeep) {
 		this.fieldsToKeep = fieldsToKeep;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	public String getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(String lastUpdated) {
+		this.lastUpdated = lastUpdated;
 	}
 	
 }

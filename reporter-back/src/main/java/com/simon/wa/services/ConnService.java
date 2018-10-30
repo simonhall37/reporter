@@ -1,6 +1,7 @@
 package com.simon.wa.services;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,6 @@ public class ConnService {
 	private final String tokenKey = "X-Redmine-API-Key";
 	private String apikey = "";
 	private RestTemplate restTemplate;
-//	private ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	
 	@Autowired
 	private MappingService mapService;
@@ -85,7 +85,8 @@ public class ConnService {
 				log.error("Error extracting objects",e);
 			}
 		}
-
+		meta.setSize(out.size());
+		meta.setLastUpdated(LocalDateTime.now().toString());
 		return out;
 
 	}
