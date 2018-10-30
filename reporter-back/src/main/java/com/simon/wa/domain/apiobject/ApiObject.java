@@ -1,4 +1,4 @@
-package com.simon.wa.domain;
+package com.simon.wa.domain.apiobject;
 
 import java.util.HashSet;
 import java.util.Set;

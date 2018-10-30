@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.simon.wa.domain.ApiObject;
-import com.simon.wa.domain.ReportingMetadata;
+import com.simon.wa.domain.apiobject.ApiObject;
+import com.simon.wa.domain.reports.ReportingMetadata;
 
 @Service
 public class ReportService {

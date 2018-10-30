@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.simon.wa.domain.ApiObject;
-import com.simon.wa.domain.MappingMetadata;
-import com.simon.wa.domain.Pair;
+import com.simon.wa.domain.apiobject.ApiObject;
+import com.simon.wa.domain.apiobject.MappingMetadata;
+import com.simon.wa.domain.apiobject.Pair;
 
 @Service
 public class ApiObjectRepository {

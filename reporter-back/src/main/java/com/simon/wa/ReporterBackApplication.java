@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.simon.wa.domain.ApiObject;
 import com.simon.wa.domain.Lookup;
-import com.simon.wa.domain.MappingMetadata;
+import com.simon.wa.domain.apiobject.ApiObject;
+import com.simon.wa.domain.apiobject.MappingMetadata;
 import com.simon.wa.services.ConnService;
 import com.simon.wa.services.LookupRepository;
 

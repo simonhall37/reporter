@@ -1,7 +1,9 @@
-package com.simon.wa.domain;
+package com.simon.wa.domain.reports;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.simon.wa.domain.apiobject.ApiObject;
 
 public class FilterMetadata {
 

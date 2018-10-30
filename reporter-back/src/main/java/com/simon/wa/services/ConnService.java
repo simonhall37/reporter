@@ -17,8 +17,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
-import com.simon.wa.domain.ApiObject;
-import com.simon.wa.domain.MappingMetadata;
+import com.simon.wa.domain.apiobject.ApiObject;
+import com.simon.wa.domain.apiobject.MappingMetadata;
 
 
 @Repository

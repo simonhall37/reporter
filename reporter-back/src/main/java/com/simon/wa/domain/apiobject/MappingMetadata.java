@@ -1,4 +1,4 @@
-package com.simon.wa.domain;
+package com.simon.wa.domain.apiobject;
 
 import java.util.HashMap;
 import java.util.Map;

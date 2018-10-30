@@ -1,4 +1,4 @@
-package com.simon.wa.domain;
+package com.simon.wa.domain.reports;
 
 public enum ReduceOps {
 

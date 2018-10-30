@@ -16,8 +16,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.simon.wa.domain.ApiObject;
-import com.simon.wa.domain.MappingMetadata;
+import com.simon.wa.domain.apiobject.ApiObject;
+import com.simon.wa.domain.apiobject.MappingMetadata;
 
 @Service
 public class MappingService {

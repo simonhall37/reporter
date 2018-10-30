@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.simon.wa.domain.MappingMetadata;
+import com.simon.wa.domain.apiobject.MappingMetadata;
 import com.simon.wa.exceptions.RestObjectAlreadyExistsException;
 import com.simon.wa.exceptions.RestObjectNotFoundException;
 import com.simon.wa.services.ApiObjectRepository;
