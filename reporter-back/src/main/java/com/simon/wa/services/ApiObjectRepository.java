@@ -81,7 +81,7 @@ public class ApiObjectRepository {
 			log.warn("Removing " + meta.getItemName() + " from in memory cache and disk");
 		List<ApiObject> toInsert = new ArrayList<>(); 
 		if (runQuery)
-			toInsert = this.connService.getResponse(meta, new HashMap<>(), 5000);
+			toInsert = this.connService.getResponse(meta, meta.getUrlParams(), 2000);
 		this.cache.put(meta, toInsert);
 		if (!writeToDisk(meta.getItemName())) {
 			log.warn(meta.getItemName() + " - can't write to disk");

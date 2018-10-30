@@ -10,13 +10,21 @@ public class MappingMetadata {
 	private Map<String,String> fieldsToKeep;
 	private int size;
 	private String lastUpdated;
+	private Map<String,String> urlParams;
 	
-	public MappingMetadata() {}
+	public MappingMetadata() {
+		this.urlParams = new HashMap<>();
+	}
 	
 	public MappingMetadata(String itemName, String pathToId) {
+		this();
 		this.itemName = itemName;
 		this.pathToId = pathToId;
 		this.fieldsToKeep = new HashMap<String,String>();
+	}
+	
+	public void addParam(String key, String value) {
+		this.urlParams.put(key, value);
 	}
 	
 	public void addField(String keyAndValue) {
@@ -65,6 +73,14 @@ public class MappingMetadata {
 
 	public void setLastUpdated(String lastUpdated) {
 		this.lastUpdated = lastUpdated;
+	}
+
+	public Map<String,String> getUrlParams() {
+		return urlParams;
+	}
+
+	public void setUrlParams(Map<String,String> urlParams) {
+		this.urlParams = urlParams;
 	}
 	
 }

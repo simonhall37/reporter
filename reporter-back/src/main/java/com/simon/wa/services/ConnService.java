@@ -85,6 +85,7 @@ public class ConnService {
 				log.error("Error extracting objects",e);
 			}
 		}
+		params.remove("offset");
 		meta.setSize(out.size());
 		meta.setLastUpdated(LocalDateTime.now().toString());
 		return out;
