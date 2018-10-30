@@ -1,13 +1,11 @@
 package com.simon.wa.domain.reports;
 
-import java.util.List;
-
 public class ReportingMetadata {
 
 	private String dataSource;
 	private String reportName;
 	private ReduceOps reductionType;
-	private List<ColumnMetadata> cols;
+	private ColumnMetadata cols;
 	private FilterMetadata filter;
 	
 	public ReportingMetadata() {}
@@ -42,11 +40,11 @@ public class ReportingMetadata {
 		this.reductionType = reductionType;
 	}
 
-	public List<ColumnMetadata> getCols() {
+	public ColumnMetadata getCols() {
 		return cols;
 	}
 
-	public void setCols(List<ColumnMetadata> cols) {
+	public void setCols(ColumnMetadata cols) {
 		this.cols = cols;
 	}
 
