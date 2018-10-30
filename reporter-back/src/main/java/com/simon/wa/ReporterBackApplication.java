@@ -72,8 +72,9 @@ public class ReporterBackApplication {
 
 	}
 
+	@SuppressWarnings("unused")
 	private void printResponse(String type, int limit) {
-
+		final ObjectMapper om = new ObjectMapper();
 		MappingMetadata meta = null;
 		if (type.equalsIgnoreCase("users")) {
 			meta = new MappingMetadata("users", "users.id");
@@ -82,7 +83,6 @@ public class ReporterBackApplication {
 			meta.addField("users.mail");
 			meta.addField("users.firstname");
 			meta.addField("users.lastname");
-			
 		} else if (type.equalsIgnoreCase("projects")) {
 			meta = new MappingMetadata("projects", "projects.id");
 			meta.addField("projects.id");
@@ -105,17 +105,20 @@ public class ReporterBackApplication {
 			meta.addField("time_entries.activity.id");
 			meta.addField("time_entries.activity.name");
 			meta.addField("time_entries.issue.id");
+			meta.addParam("spent_on", "><2018-10-30|2018-10-31");
 		}
 		
-		ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		List<ApiObject> response = this.connService.getResponse(meta, new HashMap<>(),10);
+		try {
+			System.out.println(om.writerWithDefaultPrettyPrinter().writeValueAsString(meta));
+		} catch (JsonProcessingException e) {
+			log.error("Error writing metadata to json",e);
+		}
+		
+//		@SuppressWarnings("unused")
+//		ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		List<ApiObject> response = this.connService.getResponse(meta, meta.getUrlParams(),50);
 		log.info(response.size() + " " + meta.getItemName() + " extracted, first " + limit + " ...");
 		response.stream().limit(limit).forEach(o -> {
-//			try {
-//				log.info(om.writerWithDefaultPrettyPrinter().writeValueAsString(o));
-//			} catch (JsonProcessingException e) {
-//				log.error("Couldn't print json object from " + o.getType(),e);
-//			}
 			log.info(o.getValue("id", String.class) + "," + o.getValue("project.name",String.class) + "," + o.getValue("spent_on",String.class) + "," + o.getValue("user.name", String.class) + "," + o.getValue("hours", Double.class));
 		});
 
