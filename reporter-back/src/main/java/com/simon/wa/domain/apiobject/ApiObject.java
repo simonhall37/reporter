@@ -46,11 +46,13 @@ public class ApiObject {
 						return (T) field.getValue();
 					else if (output.getSimpleName().equalsIgnoreCase("double"))
 						return (T) Double.valueOf(field.getValue());
+					else if (output.getSimpleName().equalsIgnoreCase("object"))
+						return (T) field.getValue();
 				}
 			}
 		}
 		
-		return null;
+		throw new NullPointerException("Couldn't find field:" + fieldName);
 	}
 
 	public long getId() {

@@ -1,4 +1,4 @@
-package com.simon.wa.domain.reports;
+package com.simon.wa.domain.reports.filters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,11 @@ public class FilterMetadata {
 	
 	public boolean apply(ApiObject input) {
 		for (Filterable f : this.filters) {
-			if (!f.apply(input)) return false;
+			try{
+				if (!f.apply(input)) return false;
+			} catch (Exception e) {
+				throw new IllegalArgumentException(e.getMessage() + " thrown during filtering " + f.getDetails());
+			}
 		}
 		return true;
 	}

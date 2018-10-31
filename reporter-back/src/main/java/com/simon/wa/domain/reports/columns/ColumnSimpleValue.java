@@ -1,4 +1,4 @@
-package com.simon.wa.domain.reports;
+package com.simon.wa.domain.reports.columns;
 
 import com.simon.wa.domain.apiobject.ApiObject;
 
@@ -12,7 +12,11 @@ public class ColumnSimpleValue extends ColumnDefinition {
 	
 	@Override
 	public Object generateValue(ApiObject input) {
-		return input.getValue((String)this.getInputs().get("field"), Object.class);
+		try{
+			return input.getValue((String)this.getInputs().get("field"), String.class);
+		} catch (NullPointerException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
 	}
 
 }

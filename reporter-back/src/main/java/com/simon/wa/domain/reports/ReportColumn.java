@@ -6,4 +6,6 @@ public interface ReportColumn {
 	
 	public Object outputValue(ApiObject input);
 	
+	public boolean isKey();
+	
 }

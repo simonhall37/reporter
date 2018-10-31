@@ -1,5 +1,10 @@
 package com.simon.wa.domain.reports;
 
+import java.util.List;
+
+import com.simon.wa.domain.reports.columns.ColumnMetadata;
+import com.simon.wa.domain.reports.filters.FilterMetadata;
+
 public class ReportingMetadata {
 
 	private String dataSource;
@@ -15,6 +20,33 @@ public class ReportingMetadata {
 		this.dataSource = dataSource;
 		this.reductionType = reductionType;
 	}
+	
+	public String reduce(Object[] key, List<ReportRow> values) {
+		
+		Integer[] runningTotal = new Integer[this.cols.getNumValueCols()];	
+		for (int i=0;i<runningTotal.length;i++) {
+			runningTotal[i] = 0;
+		}
+		for (ReportRow r : values) {
+			int index = 0;
+			for (Object o : r.getValues()) {
+				if (reductionType.equals(ReduceOps.COUNT))
+					runningTotal[index] = runningTotal[index++]+1;
+				else if (reductionType.equals(ReduceOps.SUM))
+					runningTotal[index] = runningTotal[index++] + Integer.parseInt((String) o);
+			}
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		for (Object o : key) {
+			sb.append(o + ",");
+		}
+		for (int i : runningTotal) {
+			sb.append(i+",");
+		}
+		return sb.toString().substring(0,sb.length()-1);
+	}
+	
 	
 	public String getDataSource() {
 		return dataSource;

@@ -1,9 +1,10 @@
-package com.simon.wa.domain.reports;
+package com.simon.wa.domain.reports.columns;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.simon.wa.domain.apiobject.ApiObject;
+import com.simon.wa.domain.reports.ReportColumn;
 
 public abstract class ColumnDefinition implements ReportColumn {
 
@@ -33,6 +34,22 @@ public abstract class ColumnDefinition implements ReportColumn {
 	@Override
 	public Object outputValue(ApiObject input) {
 		Object initial = generateValue(input);
+		if (initial instanceof java.lang.String) {
+			if (this.outputType.equals(ColOutput.STRING))
+				return initial;
+			else if (this.outputType.equals(ColOutput.INTEGER))
+				return Integer.valueOf((String)initial);
+			else if (this.outputType.equals(ColOutput.DOUBLE))
+				return Double.valueOf((String)initial);
+		}
+		else if (initial instanceof java.lang.Integer) {
+			if (this.outputType.equals(ColOutput.STRING))
+				return String.valueOf(initial);
+			else if (this.outputType.equals(ColOutput.INTEGER))
+				return initial;
+			else if (this.outputType.equals(ColOutput.DOUBLE))
+				return Double.parseDouble(String.valueOf(initial));
+		}
 		if (this.outputType.equals(ColOutput.STRING))
 			return (String)initial;
 		else if (this.outputType.equals(ColOutput.INTEGER))

@@ -1,4 +1,4 @@
-package com.simon.wa.domain.reports;
+package com.simon.wa.domain.reports.columns;
 
 public enum ColOutput {
 
