@@ -18,7 +18,7 @@ public class FilterMetadata {
 			try{
 				if (!f.apply(input)) return false;
 			} catch (Exception e) {
-				throw new IllegalArgumentException(e.getMessage() + " thrown during filtering " + f.getDetails());
+				throw new IllegalArgumentException(e.getMessage() + " thrown during filtering " + f.grabDetails());
 			}
 		}
 		return true;

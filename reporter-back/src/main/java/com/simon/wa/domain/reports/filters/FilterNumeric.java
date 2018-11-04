@@ -4,10 +4,12 @@ import com.simon.wa.domain.apiobject.ApiObject;
 
 public class FilterNumeric implements Filterable {
 
-	private final String fieldToCheck;
-	private final NumComp comp;
-	private final int lowerValue;
-	private final int upperValue;
+	private String fieldToCheck;
+	private NumComp comp;
+	private int lowerValue;
+	private int upperValue;
+	
+	public FilterNumeric() {}
 	
 	public FilterNumeric(String fieldToCheck, NumComp comp, int lowerValue, int upperValue) {
 		this.fieldToCheck = fieldToCheck;
@@ -38,7 +40,7 @@ public class FilterNumeric implements Filterable {
 	}
 
 	@Override
-	public String getDetails() {
+	public String grabDetails() {
 		// TODO Auto-generated method stub
 		return null;
 	}

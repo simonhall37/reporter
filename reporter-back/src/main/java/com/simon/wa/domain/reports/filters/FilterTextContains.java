@@ -4,10 +4,14 @@ import com.simon.wa.domain.apiobject.ApiObject;
 
 public class FilterTextContains implements Filterable {
 
-	private final String shouldContain;
-	private final String fieldToCheck;
-	private final boolean ignoreCase;
+	private String shouldContain;
+	private String fieldToCheck;
+	private boolean ignoreCase;
 
+	public FilterTextContains() {
+
+	}
+	
 	public FilterTextContains(String shouldContain, String fieldToCheck, boolean ignoreCase) {
 		this.shouldContain = shouldContain;
 		this.fieldToCheck = fieldToCheck;
@@ -16,13 +20,19 @@ public class FilterTextContains implements Filterable {
 
 	@Override
 	public boolean apply(ApiObject input) {
-		if (ignoreCase) 
-			return input.getValue(fieldToCheck, String.class).contains(shouldContain);
-		else return input.getValue(fieldToCheck, String.class).toLowerCase().contains(shouldContain.toLowerCase());
+		try {
+			if (ignoreCase) 
+				return input.getValue(fieldToCheck, String.class).contains(shouldContain);
+			else return input.getValue(fieldToCheck, String.class).toLowerCase().contains(shouldContain.toLowerCase());
+		} catch (NullPointerException e) {
+			System.out.println("Filter contains couldn't find field " + this.fieldToCheck);
+			return false;
+		}
+		
 	}
 
 	@Override
-	public String getDetails() {
+	public String grabDetails() {
 		return this.getClass().getSimpleName() + ": " + this.shouldContain + " and " + this.fieldToCheck;
 	}
 	
