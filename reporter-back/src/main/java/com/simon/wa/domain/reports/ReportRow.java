@@ -5,7 +5,7 @@ import com.simon.wa.domain.reports.columns.ColumnMetadata;
 public class ReportRow {
 
 	
-	private final Object[] keys;
+	private final ReportKey keys;
 	private final Object[] values;
 	private int keyIndex;
 	private int valueIndex;
@@ -16,13 +16,13 @@ public class ReportRow {
 			if (def.isKey()) keys++;
 			else values++;
 		}
-		this.keys = new Object[keys];
+		this.keys = new ReportKey(new Object[keys]);
 		this.values = new Object[values];
 	}
 	
 	public void addValue(Object outputValue, boolean key) {
 		if (key) {
-			this.keys[keyIndex++] = outputValue;
+			this.keys.addValue(keyIndex++,outputValue);
 		}
 		else {
 			this.values[valueIndex++] = outputValue;
@@ -30,9 +30,9 @@ public class ReportRow {
 	}
 	
 	public Object[] output() {
-		Object[] out = new Object[this.keys.length + this.values.length];
+		Object[] out = new Object[this.keys.getValues().length + this.values.length];
 		int index = 0;
-		for (Object k : this.keys) {
+		for (Object k : this.keys.getValues()) {
 			out[index++] = k;
 		}
 		for (Object v : this.values) {
@@ -41,7 +41,7 @@ public class ReportRow {
 		return out;
 	}
 
-	public Object[] getKeys() {
+	public ReportKey getKeys() {
 		return keys;
 	}
 

@@ -1,9 +1,6 @@
 package com.simon.wa.services;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -17,8 +14,8 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.simon.wa.ReporterBackApplication;
 import com.simon.wa.domain.apiobject.ApiObject;
+import com.simon.wa.domain.reports.ReportKey;
 import com.simon.wa.domain.reports.ReportRow;
 import com.simon.wa.domain.reports.ReportingMetadata;
 
@@ -27,6 +24,8 @@ public class ReportService {
 
 	@Autowired
 	private ApiObjectRepository objRepo;
+	@Autowired
+	private LookupRepository lookupRepo;
 	
 	private static final Logger log = LoggerFactory.getLogger(ReportService.class);
 
@@ -62,12 +61,13 @@ public class ReportService {
 		).collect(Collectors.toList());
 
 		log.info("Filtered data contains " + filtered.size() + " objects");
+		meta.getCols().init(this.lookupRepo);
 		
 		// get values
-		Map<Object[], List<ReportRow>> outputRows = filtered.stream().map(o -> 
+		Map<ReportKey, List<ReportRow>> outputRows = filtered.stream().map(o -> 
 				{
 					try {
-						return meta.getCols().getValues(o);
+						return meta.getCols().returnValues(o);
 					} catch (IllegalArgumentException e) {
 						ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 						try {
@@ -78,9 +78,11 @@ public class ReportService {
 						throw new IllegalArgumentException(e.getMessage());
 					}
 				}
-			).collect(Collectors.groupingBy(row -> row.getKeys(),HashMap::new,Collectors.toCollection(ArrayList::new)));
-
+			).collect(Collectors.groupingBy(row -> row.getKeys(),TreeMap::new,Collectors.toCollection(ArrayList::new)));
+		
 		List<String> finalOutput = outputRows.entrySet().stream().map(e -> meta.reduce(e.getKey(),e.getValue())).collect(Collectors.toList());
+		
+		log.info(finalOutput.size() + " rows");
 		
 		return finalOutput;
 	}

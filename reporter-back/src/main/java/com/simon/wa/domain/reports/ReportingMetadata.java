@@ -21,27 +21,25 @@ public class ReportingMetadata {
 		this.reductionType = reductionType;
 	}
 	
-	public String reduce(Object[] key, List<ReportRow> values) {
+	public String reduce(ReportKey key, List<ReportRow> values) {
 		
-		Integer[] runningTotal = new Integer[this.cols.getNumValueCols()];	
+		Double[] runningTotal = new Double[this.cols.numValueCols()];	
 		for (int i=0;i<runningTotal.length;i++) {
-			runningTotal[i] = 0;
+			runningTotal[i] = 0d;
 		}
 		for (ReportRow r : values) {
 			int index = 0;
 			for (Object o : r.getValues()) {
 				if (reductionType.equals(ReduceOps.COUNT))
 					runningTotal[index] = runningTotal[index++]+1;
-				else if (reductionType.equals(ReduceOps.SUM))
-					runningTotal[index] = runningTotal[index++] + Integer.parseInt((String) o);
+				else if (reductionType.equals(ReduceOps.SUM)) {
+					runningTotal[index] = runningTotal[index++] + (double)o;
+				}
 			}
 		}
 		
-		StringBuilder sb = new StringBuilder();
-		for (Object o : key) {
-			sb.append(o + ",");
-		}
-		for (int i : runningTotal) {
+		StringBuilder sb = new StringBuilder(key + ",");
+		for (double i : runningTotal) {
 			sb.append(i+",");
 		}
 		return sb.toString().substring(0,sb.length()-1);
