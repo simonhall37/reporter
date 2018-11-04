@@ -25,7 +25,7 @@ public class Lookup {
 	@NotBlank
 	private String name;
 	
-	@OneToMany(cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
+	@OneToMany(cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
 	private Set<LookupPair> values = new HashSet<>();
 	
 	public Lookup() {}
@@ -35,6 +35,17 @@ public class Lookup {
 		for (String[] pair : items) {
 			this.values.add(new LookupPair(pair));
 		}
+	}
+	
+	public void addValue(String[] item) {
+		this.values.add(new LookupPair(item));
+	}
+	
+	public String findValue(String key) {
+		for (LookupPair pair : this.values) {
+			if (pair.getKey().equals(key)) return pair.getValue();
+		}
+		return null;
 	}
 	
 	public long getId() {
