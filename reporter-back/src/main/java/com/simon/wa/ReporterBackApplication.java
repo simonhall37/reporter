@@ -1,7 +1,10 @@
 package com.simon.wa;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simon.wa.domain.Lookup;
 import com.simon.wa.domain.apiobject.ApiObject;
@@ -23,6 +28,8 @@ import com.simon.wa.domain.reports.ReduceOps;
 import com.simon.wa.domain.reports.ReportColumn;
 import com.simon.wa.domain.reports.ReportingMetadata;
 import com.simon.wa.domain.reports.columns.ColOutput;
+import com.simon.wa.domain.reports.columns.ColumnCombine;
+import com.simon.wa.domain.reports.columns.ColumnLookup;
 import com.simon.wa.domain.reports.columns.ColumnMetadata;
 import com.simon.wa.domain.reports.columns.ColumnSimpleValue;
 import com.simon.wa.domain.reports.filters.FilterMetadata;
@@ -32,6 +39,7 @@ import com.simon.wa.domain.reports.filters.Filterable;
 import com.simon.wa.domain.reports.filters.NumComp;
 import com.simon.wa.services.ApiObjectRepository;
 import com.simon.wa.services.ConnService;
+import com.simon.wa.services.CsvService;
 import com.simon.wa.services.LookupRepository;
 import com.simon.wa.services.ReportService;
 
@@ -54,6 +62,11 @@ public class ReporterBackApplication {
 	@Autowired
 	private ApiObjectRepository objRepo;
 	
+	@Autowired
+	private CsvService csvService;
+	
+	ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	
 	public static void main(String[] args) {
 		SpringApplication.run(ReporterBackApplication.class, args);
 	}
@@ -63,11 +76,11 @@ public class ReporterBackApplication {
 		return args -> {
 			loadDummyLookups();
 			
-			generateUserReport();
+//			generateUserReport();
 			
 //			printResponse("users", 2);
 //			printResponse("projects", 2);
-//			printResponse("time_entries", 50);
+//			printResponse("time_entries", 2);
 			log.info("started");
 		};
 	}
@@ -76,30 +89,44 @@ public class ReporterBackApplication {
 		int userSize = this.objRepo.findByName("users").getSize();
 		if (userSize > 0) {
 			log.info(userSize + " users found");
-//			Filterable filterC = new FilterTextContains("a", "firstname",true);
+			Filterable filterC = new FilterTextContains("as", "firstname",true);
 			Filterable filterN = new FilterNumeric("id", NumComp.BETWEEN, 0, 900);
 			List<Filterable> filters = new ArrayList<>();
-//			filters.add(filterC);
+			filters.add(filterC);
 			filters.add(filterN);
-			ReportColumn id = new ColumnSimpleValue("id", false, ColOutput.INTEGER, "id");
-			ReportColumn fname = new ColumnSimpleValue("first_name", true, ColOutput.STRING, "firstname");
-			ReportColumn lname = new ColumnSimpleValue("last_name", false, ColOutput.STRING, "lastname");
+			ReportColumn id = new ColumnSimpleValue("id", true, ColOutput.INTEGER, "id");
+			ReportColumn team = new ColumnLookup("team", true, ColOutput.STRING, "id", "Teams", "Other");
+//			ReportColumn fname = new ColumnSimpleValue("first_name", true, ColOutput.STRING, "firstname");
+			List<String> fields = new ArrayList<String>();
+			fields.add("firstname");
+			fields.add("lastname");
+			ReportColumn bname = new ColumnCombine("full_name", true, ColOutput.STRING, fields, ".");
 			List<ReportColumn> cols = new ArrayList<>();
 			cols.add(id);
-			cols.add(fname);
-			cols.add(lname);
+			cols.add(team);
+			cols.add(bname);
 			
 			FilterMetadata fMeta = new FilterMetadata();
 			fMeta.setFilters(filters);
 			ColumnMetadata cMeta = new ColumnMetadata();
 			cMeta.setColumns(cols);
-			ReportingMetadata rMeta = new ReportingMetadata("users_report","users",ReduceOps.COUNT);
+			ReportingMetadata rMeta = new ReportingMetadata("users_report","users",ReduceOps.SUM);
 			rMeta.setFilter(fMeta);
 			rMeta.setCols(cMeta);
+			
+			System.out.println(this.lookupRepo.count() + " lookups");
+			
 			List<String> result = this.repService.generateReport(rMeta);
 			
 			for (String record : result) {
 				System.out.println(record);
+			}
+			
+			try {
+				System.out.println(om.writerWithDefaultPrettyPrinter().writeValueAsString(rMeta));
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
 		} else log.warn("Can't generate report as no users stored");
@@ -107,22 +134,19 @@ public class ReporterBackApplication {
 
 	private void loadDummyLookups() {
 
-		List<String[]> items = new ArrayList<>();
-		items.add(new String[] { "key1", "value1" });
-		items.add(new String[] { "key2", "value2" });
-		items.add(new String[] { "key3", "value3" });
+		String resPath = "C:\\Users\\Simon\\git\\reporter\\reporter-back\\src\\main\\resources\\";
+		try {
+			this.lookupRepo.save(getLookupFromFile(resPath, "teams", ".csv"));
+		} catch (IOException e) {
+			log.error("Couldn't read file from system " + resPath + "teams.csv");
+		}
 
-		Lookup lookup1 = new Lookup("lookup1", items);
-		this.lookupRepo.save(lookup1);
-
-		List<String[]> items2 = new ArrayList<>();
-		items2.add(new String[] { "key1", "value1" });
-		items2.add(new String[] { "key2", "value2" });
-		items2.add(new String[] { "key3", "value3" });
-
-		Lookup lookup2 = new Lookup("lookup2", items);
-		this.lookupRepo.save(lookup2);
-
+	}
+	
+	private Lookup getLookupFromFile(String path, String name, String extension) throws IOException {
+		byte[] encoded = Files.readAllBytes(Paths.get(path + name + extension));
+		String contents = new String(encoded,  StandardCharsets.UTF_8);
+		return this.csvService.lookupFromString(name, contents);
 	}
 
 	@SuppressWarnings("unused")
@@ -164,11 +188,11 @@ public class ReporterBackApplication {
 			meta.addParam("spent_on", "><2018-10-30|2018-10-31");
 		}
 		
-//		try {
-//			System.out.println(om.writerWithDefaultPrettyPrinter().writeValueAsString(meta));
-//		} catch (JsonProcessingException e) {
-//			log.error("Error writing metadata to json",e);
-//		}
+		try {
+			System.out.println(om.writerWithDefaultPrettyPrinter().writeValueAsString(meta));
+		} catch (JsonProcessingException e) {
+			log.error("Error writing metadata to json",e);
+		}
 		
 //		@SuppressWarnings("unused")
 //		ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
