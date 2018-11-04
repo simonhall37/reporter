@@ -8,7 +8,7 @@ import com.simon.wa.domain.reports.ReportColumn;
 
 public abstract class ColumnDefinition implements ReportColumn {
 
-	private String type;
+	private String columnType;
 	private String colName;
 	private boolean key;
 	private Map<String,Object> inputs;
@@ -48,24 +48,26 @@ public abstract class ColumnDefinition implements ReportColumn {
 			else if (this.outputType.equals(ColOutput.INTEGER))
 				return initial;
 			else if (this.outputType.equals(ColOutput.DOUBLE))
-				return Double.parseDouble(String.valueOf(initial));
+				return ((Integer)initial).doubleValue();
 		}
-		if (this.outputType.equals(ColOutput.STRING))
-			return (String)initial;
-		else if (this.outputType.equals(ColOutput.INTEGER))
-			return (Integer)initial;
-		else if (this.outputType.equals(ColOutput.DOUBLE))
-			return (Double)initial;
+		else if (initial instanceof java.lang.Double) {
+			if (this.outputType.equals(ColOutput.STRING))
+				return String.valueOf(initial);
+			else if (this.outputType.equals(ColOutput.INTEGER))
+				return ((Double)initial).intValue();
+			else if (this.outputType.equals(ColOutput.DOUBLE))
+				return initial;
+		}
 		return null;
 	}
 
 
-	public String getType() {
-		return type;
+	public String getColumnType() {
+		return columnType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setColumnType(String type) {
+		this.columnType = type;
 	}
 
 	public Map<String,Object> getInputs() {
