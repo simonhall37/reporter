@@ -1,6 +1,10 @@
 @import 'variables';
 @import '../node_modules/bootstrap/scss/bootstrap';
 
+html {
+  overflow-y: scroll;
+}
+
 html, body {
   height: 100%;
   background-color: lighten($primary, 33);

@@ -1,0 +1,69 @@
+@import '../../variables';
+
+.row {
+  margin: 0px;
+}
+
+.box {
+  width: 100%;
+  border-style: solid;
+  border-width: thin;
+  border-color:  $primary;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.box-title{
+  padding:20px;
+}
+
+.btn-fa {
+  color: $primary;
+}
+
+.btn-fa:hover {
+   color: lighten($primary, 10);
+}
+
+.thead-custom {
+  background-color: $primary !important;
+  border-color: white !important;
+}
+
+.pair-entry {
+  width: 500px;
+}
+
+.table tbody tr:hover td, .table tbody tr:hover th {
+  background-color: lighten($primary, 40);
+}
+
+.table {
+  width:80%;
+  margin-left:10%;
+  margin-right:10%;
+}
+
+.circle-button {
+  maring-left:10px;
+  margin-right:10px;
+}
+
+.read-only {
+  border: 1px;
+  border-color: transparent;
+  border-style: solid;
+  background: none;
+  width: 100%;
+  max-width: 500px;
+}
+
+.editMode {
+  border: 1px;
+  border-color: lighten($primary, 40);
+  border-style: solid;
+  background: none;
+  width: 100%;
+  max-width: 500px;
+}

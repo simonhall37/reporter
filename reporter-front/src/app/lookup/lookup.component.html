@@ -1,3 +1,86 @@
-<p>
-  lookup works!
-</p>
+<div>
+  <!-- add lookup -->
+  <div class="box row">
+    <form class="form-inline">
+      <div class="col-12">
+        <div class="form-group row">
+          <div class="col-sm-10">
+            <input type="text" name="name" class="form-control" tabindex="1" [(ngModel)]="newLookupName" (keypress)="addLookupKeyPress($event)" placeholder="Lookup Name...">
+          </div>
+          <div class="col-sm-2">
+            <span class="fa-stack fa btn-fa" tabindex="1" (click)="addLookup()" (keypress)="addLookupKeyPress($event)">
+              <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+              <i class="fas fa-plus fa-stack-1x fa-inverse" aria-hidden="true"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- lookups -->
+  <div class="box row" *ngFor="let lookup of lookups">
+    <div class="box-title col-12 row">
+      <div class="col-sm-10">
+        <h4>{{lookup.name}}</h4>
+      </div>
+      <div class="col-sm-2">
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(lookup)" (click)="removeLookup(lookup)" (keypress)="removeLookup(lookup)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-trash fa-inverse" aria-hidden="true"></i>
+        </span>
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(lookup)" (click)="addPair(lookup)" (keypress)="addPair(lookup)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-plus fa-inverse" aria-hidden="true"></i>
+        </span>
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(lookup)" (click)="toggleEditMode(lookup)" (keypress)="toggleEditMode(lookup)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-inverse" aria-hidden="true"
+              [ngClass]="{'fa-pencil-alt': !lookup.editMode,'fa-check' : lookup.editMode}"
+          ></i>
+        </span>
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(lookup)" (click)="hideLookup(lookup)" (keypress)="hideLookup(lookup)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-inverse" aria-hidden="true"
+              [ngClass]="{'fa-eye-slash': !lookup.hide,'fa-eye' : lookup.hide}"
+          ></i>
+        </span>
+      </div>
+    </div>
+    <table class="table table-hover" *ngIf="!lookup.hide">
+      <thead class="thead-dark thead-custom">
+        <tr>
+          <th class="thead-custom pair-entry">Key</th>
+          <th class="thead-custom pair-entry">Value</th>
+          <th class="thead-custom"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pair of lookup.values">
+          <td class="pair-entry">
+            <input class="read-only" [(ngModel)]="pair.key"
+            [readonly]="!lookup.editMode" [attr.tabindex]="getTabIndex(lookup)"
+            [ngClass]="{'read-only': !lookup.editMode,'editMode' : lookup.editMode}"
+            (keypress)="updateLookupKeyPress($event,lookup)"
+            >
+          </td>
+          <td  class="pair-entry">
+            <input   class="read-only" [(ngModel)]="pair.value"
+          [readonly]="!lookup.editMode" [attr.tabindex]="getTabIndex(lookup)"
+          [ngClass]="{'read-only': !lookup.editMode,'editMode' : lookup.editMode}"
+          (keypress)="updateLookupKeyPress($event,lookup)"
+          >
+        </td>
+        <td>
+          <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(lookup)" (click)="removePair(lookup,pair)" (keypress)="removePair(lookup,pair)">
+            <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+            <i class="fas fa-stack-1x fa-trash fa-inverse" aria-hidden="true"></i>
+          </span>
+        </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+</div>

@@ -6,13 +6,16 @@
 }
 
 .main {
-  height: calc(100% - 60px);
+  min-height: calc(100% - 60px);
   border-left-width: medium;
   border-left-style: solid;
   border-right-width: medium;
   border-right-style: solid;
   border-color: $primary;
-  padding: 20px;
+  padding-top: 20px;
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-bottom: 20px;
   background-color: white;
   width: 90%;
 }
@@ -25,4 +28,43 @@
 
 .nav-item {
   padding-right: 25px;
+}
+
+.row {
+  margin: 0px;
+}
+
+.box {
+  width: 100%;
+  border-style: double;
+  border-width: medium;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.box-error {
+  border-color: $error;
+  color: $error;
+}
+
+.box-warning {
+  border-color: $warning;
+  color: $warning;
+}
+
+.box-success {
+  border-color: $success;
+  color: $success;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: black;
+}
+
+.btn-fa:hover {
+   color: lighten($primary, 10);
 }

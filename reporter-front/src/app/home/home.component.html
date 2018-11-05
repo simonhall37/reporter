@@ -41,6 +41,28 @@
 
   <div class="mx-auto center main">
 
+    <!-- Message -->
+    <div class="box row" *ngIf="message.show" [ngClass]="{'box-error': isError(),'box-warning' : isWarning(),'box-success' : isSuccess()}">
+        <div class="col-sm-12">
+          <div class="row">
+            <div class="col-sm-2">
+              <i class="fas fa-2x" aria-hidden="true"
+                [ngClass]="{'fa-skull-crossbones':isError(),'fa-exclamation-triangle':isWarning(),'fa-thumbs-up':isSuccess()}"
+              ></i>
+            </div>
+            <div class="col-sm-8 message">
+              <h6>{{message.message}}</h6>
+            </div>
+            <div class="col-sm-2">
+              <span class="fa-stack fa btn-fa" tabindex="1" (click)="toggleMessageVis()" (keyup.enter)="toggleMessageVis()">
+                <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+                <i class="fas fa-times fa-stack-1x fa-inverse" aria-hidden="true"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+    </div>
+
     <!-- <div class="loading" *ngIf="loading">
       <h1>Loading <i class="fas fa-spinner fa-pulse"></i></h1>
     </div>
