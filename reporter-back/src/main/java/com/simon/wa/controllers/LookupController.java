@@ -41,7 +41,6 @@ public class LookupController {
 	
 	@GetMapping
 	public ResponseEntity<List<Lookup>> getAllLookups(){
-		log.info("Get all lookups request");
 		List<Lookup> lookups = this.lookupRepo.findAll();
 		
 		if (lookups.size()==0)
