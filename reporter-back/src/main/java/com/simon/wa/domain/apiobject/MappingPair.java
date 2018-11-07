@@ -2,15 +2,15 @@ package com.simon.wa.domain.apiobject;
 
 import java.util.List;
 
-public class Pair {
+public class MappingPair {
 
 	private MappingMetadata key;
 	private List<ApiObject> value;
 	
-	public Pair() {
+	public MappingPair() {
 	}
 	
-	public Pair(MappingMetadata key,List<ApiObject> value) {
+	public MappingPair(MappingMetadata key,List<ApiObject> value) {
 		this.key = key;
 		this.value = value;
 	}

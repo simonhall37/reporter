@@ -17,7 +17,7 @@ public class ColumnLookup extends ColumnDefinition implements ReportColumn {
 	
 	public ColumnLookup(String colName, boolean key, ColOutput outputType, String inputFieldName,String lookupName, String defaultValue) {
 		super(colName, key, outputType);
-		this.setColumnType("combine");
+		this.setColumnType("lookup");
 		this.addInput("field", inputFieldName);
 		this.addInput("lookup", lookupName);
 		this.addInput("default", defaultValue);

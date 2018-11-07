@@ -76,7 +76,7 @@ public class ReporterBackApplication {
 		return args -> {
 			loadDummyLookups();
 			
-//			generateUserReport();
+			generateUserReport();
 			
 //			printResponse("users", 2);
 //			printResponse("projects", 2);
@@ -95,7 +95,7 @@ public class ReporterBackApplication {
 			filters.add(filterC);
 			filters.add(filterN);
 			ReportColumn id = new ColumnSimpleValue("id", true, ColOutput.INTEGER, "id");
-			ReportColumn team = new ColumnLookup("team", true, ColOutput.STRING, "id", "Teams", "Other");
+			ReportColumn team = new ColumnLookup("team", true, ColOutput.STRING, "id", "teams", "Other");
 //			ReportColumn fname = new ColumnSimpleValue("first_name", true, ColOutput.STRING, "firstname");
 			List<String> fields = new ArrayList<String>();
 			fields.add("firstname");

@@ -1,17 +1,17 @@
-package com.simon.wa.domain.apiobject;
+package com.simon.wa.domain;
 
-public class UrlPair {
+public class Pair {
 
 	private String key;
-	private String value;
+	private Object value;
 	
-	public UrlPair() {}
+	public Pair() {}
 
 	public String getKey() {
 		return key;
 	}
 	
-	public UrlPair(String key, String value) {
+	public Pair(String key, Object value) {
 		this.key = key;
 		this.value = value;
 	}
@@ -25,11 +25,11 @@ public class UrlPair {
 		this.key = key;
 	}
 
-	public String getValue() {
+	public Object getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(Object value) {
 		this.value = value;
 	}
 	

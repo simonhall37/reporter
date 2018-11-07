@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simon.wa.domain.apiobject.ApiObject;
 import com.simon.wa.domain.apiobject.MappingMetadata;
-import com.simon.wa.domain.apiobject.Pair;
+import com.simon.wa.domain.apiobject.MappingPair;
 
 @Service
 public class ApiObjectRepository {
@@ -137,10 +137,10 @@ public class ApiObjectRepository {
 	
 	private boolean readFromDisk(String cacheName) {
 
-		Pair toRead = null;
+		MappingPair toRead = null;
 		File outFile = new File(this.OUT_DIR + "/" + cacheName);
 		try {
-			toRead = om.readValue(outFile, Pair.class);
+			toRead = om.readValue(outFile, MappingPair.class);
 			this.cache.put(toRead.getKey(),toRead.getValue());
 			return true;
 		} catch (IOException e) {
@@ -155,7 +155,7 @@ public class ApiObjectRepository {
 		try {
 			for (Map.Entry<MappingMetadata,List<ApiObject>> entry : this.cache.entrySet()) {
 				if (entry.getKey().getItemName().equalsIgnoreCase(cacheName)) {
-					Pair pair = new Pair(entry.getKey(),entry.getValue());
+					MappingPair pair = new MappingPair(entry.getKey(),entry.getValue());
 					om.writerWithDefaultPrettyPrinter().writeValue(outFile, pair);
 					return true;
 				}

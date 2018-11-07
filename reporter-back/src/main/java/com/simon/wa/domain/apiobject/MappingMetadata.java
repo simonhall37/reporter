@@ -3,6 +3,8 @@ package com.simon.wa.domain.apiobject;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.simon.wa.domain.Pair;
+
 public class MappingMetadata {
 
 	private String itemName;
@@ -10,7 +12,7 @@ public class MappingMetadata {
 	private List<String> fieldsToKeep;
 	private int size;
 	private String lastUpdated;
-	private List<UrlPair> urlParams;
+	private List<Pair> urlParams;
 	
 	public MappingMetadata() {
 		this.urlParams = new ArrayList<>();
@@ -24,7 +26,7 @@ public class MappingMetadata {
 	}
 	
 	public void addParam(String key, String value) {
-		this.urlParams.add(new UrlPair(key, value));
+		this.urlParams.add(new Pair(key, value));
 	}
 	
 	public void addField(String keyAndValue) {
@@ -71,11 +73,11 @@ public class MappingMetadata {
 		this.lastUpdated = lastUpdated;
 	}
 
-	public List<UrlPair> getUrlParams() {
+	public List<Pair> getUrlParams() {
 		return urlParams;
 	}
 
-	public void setUrlParams(List<UrlPair> urlParams) {
+	public void setUrlParams(List<Pair> urlParams) {
 		this.urlParams = urlParams;
 	}
 	

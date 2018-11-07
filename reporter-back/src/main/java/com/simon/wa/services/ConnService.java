@@ -16,9 +16,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
+import com.simon.wa.domain.Pair;
 import com.simon.wa.domain.apiobject.ApiObject;
 import com.simon.wa.domain.apiobject.MappingMetadata;
-import com.simon.wa.domain.apiobject.UrlPair;
 
 
 @Repository
@@ -46,10 +46,10 @@ public class ConnService {
 		}
 	}
 
-	public String buildUrl(String type, List<UrlPair> params,int limit) {
+	public String buildUrl(String type, List<Pair> params,int limit) {
 
 		StringBuilder url = new StringBuilder(this.URL + "/" + type + "." + this.FORMAT + "?");
-		for (UrlPair entry : params) {
+		for (Pair entry : params) {
 			url.append(entry.getKey() + "=" + entry.getValue() + "&");
 		}
 		url.append("limit=" + limit);
@@ -57,7 +57,7 @@ public class ConnService {
 		return url.toString();
 	}
 
-	public List<ApiObject> getResponse(MappingMetadata meta, List<UrlPair> params,int hardLimit) {
+	public List<ApiObject> getResponse(MappingMetadata meta, List<Pair> params,int hardLimit) {
 
 		List<ApiObject> out = new ArrayList<>();
 		if (this.apikey.length() == 0)
@@ -73,7 +73,7 @@ public class ConnService {
 		
 		for (int i = 0; i<=Math.min(iterations,hardLimit);i++) {
 			try {
-				params.add(new UrlPair("offset", String.valueOf(i*this.LIMIT)));
+				params.add(new Pair("offset", String.valueOf(i*this.LIMIT)));
 				List<ApiObject> temp = this.mapService.parseObject(getResponseAsString(buildUrl(meta.getItemName(), params,this.LIMIT)), meta);
 				int count = 0;
 				for (ApiObject child : temp.get(0).getChildren()) {
