@@ -55,14 +55,21 @@ public class MappingMetadataController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> postLookup(@Valid @RequestBody MappingMetadata meta, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<?> postMetadata(@Valid @RequestBody MappingMetadata meta, UriComponentsBuilder ucBuilder) {
 
 		if (this.objRepo.findByName(meta.getItemName()) != null) {
 			throw new RestObjectAlreadyExistsException(log, "mappingmetadata", meta.getItemName());
 		}
-		MappingMetadata savedMeta = this.objRepo.save(meta, true);
+		MappingMetadata savedMeta = this.objRepo.save(meta, false);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setLocation(ucBuilder.path("/lookups/{name}").buildAndExpand(meta.getItemName()).toUri());
+		return new ResponseEntity<>(savedMeta, headers, HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/{name}")
+	public ResponseEntity<?> executeQuery(@Valid @RequestBody MappingMetadata meta) {
+		MappingMetadata savedMeta = this.objRepo.save(meta, true);
+		HttpHeaders headers = new HttpHeaders();
 		return new ResponseEntity<>(savedMeta, headers, HttpStatus.CREATED);
 	}
 
@@ -73,7 +80,7 @@ public class MappingMetadataController {
 		if (oldMeta != null) {
 			oldMeta.setFieldsToKeep(meta.getFieldsToKeep());
 			oldMeta.setPathToId(meta.getPathToId());
-			this.objRepo.save(oldMeta, true);
+			this.objRepo.save(oldMeta, false);
 			return new ResponseEntity<>(oldMeta, HttpStatus.OK);
 		} else
 			throw new RestObjectNotFoundException(log, "mappingmetadata", "name", name);

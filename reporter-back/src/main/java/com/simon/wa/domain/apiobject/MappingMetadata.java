@@ -1,38 +1,34 @@
 package com.simon.wa.domain.apiobject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MappingMetadata {
 
 	private String itemName;
 	private String pathToId;
-	private Map<String,String> fieldsToKeep;
+	private List<String> fieldsToKeep;
 	private int size;
 	private String lastUpdated;
-	private Map<String,String> urlParams;
+	private List<UrlPair> urlParams;
 	
 	public MappingMetadata() {
-		this.urlParams = new HashMap<>();
+		this.urlParams = new ArrayList<>();
 	}
 	
 	public MappingMetadata(String itemName, String pathToId) {
 		this();
 		this.itemName = itemName;
 		this.pathToId = pathToId;
-		this.fieldsToKeep = new HashMap<String,String>();
+		this.fieldsToKeep = new ArrayList<String>();
 	}
 	
 	public void addParam(String key, String value) {
-		this.urlParams.put(key, value);
+		this.urlParams.add(new UrlPair(key, value));
 	}
 	
 	public void addField(String keyAndValue) {
-		this.fieldsToKeep.put(keyAndValue, keyAndValue);
-	}
-	
-	public void addField(String key,String value) {
-		this.fieldsToKeep.put(key,value);
+		this.fieldsToKeep.add(keyAndValue);
 	}
 
 	public String getItemName() {
@@ -51,11 +47,11 @@ public class MappingMetadata {
 		this.pathToId = pathToId;
 	}
 
-	public Map<String,String> getFieldsToKeep() {
+	public List<String> getFieldsToKeep() {
 		return fieldsToKeep;
 	}
 
-	public void setFieldsToKeep(Map<String,String> fieldsToKeep) {
+	public void setFieldsToKeep(List<String> fieldsToKeep) {
 		this.fieldsToKeep = fieldsToKeep;
 	}
 
@@ -75,11 +71,11 @@ public class MappingMetadata {
 		this.lastUpdated = lastUpdated;
 	}
 
-	public Map<String,String> getUrlParams() {
+	public List<UrlPair> getUrlParams() {
 		return urlParams;
 	}
 
-	public void setUrlParams(Map<String,String> urlParams) {
+	public void setUrlParams(List<UrlPair> urlParams) {
 		this.urlParams = urlParams;
 	}
 	

@@ -47,7 +47,7 @@ public class MappingService {
 				}
 			}
 			else {
-				if (meta.getFieldsToKeep().keySet().contains(e.getKey())){
+				if (meta.getFieldsToKeep().contains(e.getKey())){
 					rootObj.addField(e.getKey(), e.getValue().asText());
 				}
 				
@@ -83,7 +83,7 @@ public class MappingService {
 				obj.setId(pair.getValue().asLong());
 //			else if (meta.getPathToName().equalsIgnoreCase(locToString(location) + "." + pair.getKey()))
 //				obj.setName(pair.getValue().asText());
-			if (meta.getFieldsToKeep().keySet().contains(locToString(location) + "." + pair.getKey()))
+			if (meta.getFieldsToKeep().contains(locToString(location) + "." + pair.getKey()))
 				obj.addField(pair.getKey(), pair.getValue().asText());
 		}
 		parent.addChild(obj);

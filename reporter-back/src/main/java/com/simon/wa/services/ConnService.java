@@ -3,9 +3,8 @@ package com.simon.wa.services;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.simon.wa.domain.apiobject.ApiObject;
 import com.simon.wa.domain.apiobject.MappingMetadata;
+import com.simon.wa.domain.apiobject.UrlPair;
 
 
 @Repository
@@ -46,10 +46,10 @@ public class ConnService {
 		}
 	}
 
-	public String buildUrl(String type, Map<String,String> params,int limit) {
+	public String buildUrl(String type, List<UrlPair> params,int limit) {
 
 		StringBuilder url = new StringBuilder(this.URL + "/" + type + "." + this.FORMAT + "?");
-		for (Entry<String,String> entry : params.entrySet()) {
+		for (UrlPair entry : params) {
 			url.append(entry.getKey() + "=" + entry.getValue() + "&");
 		}
 		url.append("limit=" + limit);
@@ -57,7 +57,7 @@ public class ConnService {
 		return url.toString();
 	}
 
-	public List<ApiObject> getResponse(MappingMetadata meta, Map<String,String> params,int hardLimit) {
+	public List<ApiObject> getResponse(MappingMetadata meta, List<UrlPair> params,int hardLimit) {
 
 		List<ApiObject> out = new ArrayList<>();
 		if (this.apikey.length() == 0)
@@ -73,19 +73,20 @@ public class ConnService {
 		
 		for (int i = 0; i<=Math.min(iterations,hardLimit);i++) {
 			try {
-				params.put("offset", String.valueOf(i*this.LIMIT));
+				params.add(new UrlPair("offset", String.valueOf(i*this.LIMIT)));
 				List<ApiObject> temp = this.mapService.parseObject(getResponseAsString(buildUrl(meta.getItemName(), params,this.LIMIT)), meta);
 				int count = 0;
 				for (ApiObject child : temp.get(0).getChildren()) {
 					out.add(child);
 					count++;
 				}
-				log.info("Extracted " + count + " from " + this.URL + params);
+				log.info("Extracted " + count + " from " + this.URL + Arrays.toString(params.toArray()));
 			} catch (IOException e) {
 				log.error("Error extracting objects",e);
 			}
+			params.removeIf(p -> p.getKey().equals("offset"));
 		}
-		params.remove("offset");
+		
 		meta.setSize(out.size());
 		meta.setLastUpdated(LocalDateTime.now().toString());
 		return out;
