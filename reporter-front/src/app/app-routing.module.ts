@@ -4,6 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import {LookupComponent} from './lookup/lookup.component';
 import {MappingComponent} from './mapping/mapping.component';
+import {ReportComponent} from './report/report.component';
 import {AuthGuard} from './security/auth.guard';
 
 const routes: Routes = [
@@ -12,6 +13,7 @@ const routes: Routes = [
     children: [
         { path: 'lookups', component: LookupComponent ,canActivate: [AuthGuard] }
       , { path: 'mapping', component: MappingComponent ,canActivate: [AuthGuard] }
+      , { path: 'report', component: ReportComponent ,canActivate: [AuthGuard] }
     ]
     },
    {

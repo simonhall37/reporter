@@ -9,6 +9,7 @@ import { HomeComponent } from './home/home.component';
 import {BasicAuthInterceptor} from './security/basic.auth.interceptor';
 import { LookupComponent } from './lookup/lookup.component';
 import { MappingComponent } from './mapping/mapping.component';
+import { ReportComponent } from './report/report.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { MappingComponent } from './mapping/mapping.component';
     LoginComponent,
     HomeComponent,
     LookupComponent,
-    MappingComponent
+    MappingComponent,
+    ReportComponent
   ],
   imports: [
     BrowserModule,
