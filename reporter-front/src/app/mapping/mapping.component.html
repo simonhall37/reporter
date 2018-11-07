@@ -1,0 +1,145 @@
+<div>
+  <!-- add Mapping -->
+  <div class="box row">
+    <form class="form-inline">
+      <div class="col-12">
+        <div class="row">
+          <div class="col-sm-5 form-control-parent">
+            <input type="text" name="name" class="form-control" tabindex="1" [(ngModel)]="newMapping.itemName" (keypress)="addMappingKeyPress($event)" placeholder="Item Name...">
+          </div>
+          <div class="col-sm-5 form-control-parent">
+            <input type="text" name="pathToId" class="form-control" tabindex="1" [(ngModel)]="newMapping.pathToId" (keypress)="addMappingKeyPress($event)" placeholder="Path To Id...">
+          </div>
+          <div class="col-sm-2 outer">
+            <span class="fa-stack fa btn-fa vert-center" tabindex="1" (click)="addMapping()" (keypress)="addMappingKeyPress($event)">
+              <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+              <i class="fas fa-plus fa-stack-1x fa-inverse" aria-hidden="true"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Mappings -->
+  <div class="box row" *ngFor="let mapping of mappings">
+    <div class="box-title col-12 row">
+      <div class="col-sm-6">
+        <h4>{{mapping.itemName}}</h4>
+      </div>
+      <div class="col-sm-6">
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(mapping)" (click)="removeMapping(mapping)" (keypress)="removeMapping(mapping)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-trash fa-inverse" aria-hidden="true"></i>
+        </span>
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(mapping)" (click)="addUrlParam(mapping)" (keypress)="addUrlParam(mapping)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-question fa-inverse" aria-hidden="true"></i>
+        </span>
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(mapping)" (click)="addField(mapping)" (keypress)="addField(mapping)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-sliders-h fa-inverse" aria-hidden="true"></i>
+        </span>
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(mapping)" (click)="toggleEditMode(mapping)" (keypress)="toggleEditMode(mapping)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-inverse" aria-hidden="true"
+              [ngClass]="{'fa-pencil-alt': !mapping.editMode,'fa-check' : mapping.editMode}"
+          ></i>
+        </span>
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(mapping)" (click)="executeQuery(mapping)" (keypress)="executeQuery(mapping)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-inverse" aria-hidden="true"
+              [ngClass]="{'fa-play': !mapping.running,'fa-spinner fa-spin': mapping.running}"
+          ></i>
+        </span>
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(mapping)" (click)="hideMapping(mapping)" (keypress)="hideMapping(mapping)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-inverse" aria-hidden="true"
+              [ngClass]="{'fa-eye-slash': !mapping.hide,'fa-eye' : mapping.hide}"
+          ></i>
+        </span>
+      </div>
+      <div *ngIf="!mapping.hide" class="col-sm-12">
+        <div class="form-row">
+          <div class="row outer">
+            <label class="vert-center left-text">Updated On:</label>
+            <input class="read-only field" [(ngModel)]="mapping.lastUpdated" readonly>
+            <label class="vert-center left-text">Path to Id:</label>
+            <input class="read-only field" [(ngModel)]="mapping.pathToId"
+            [readonly]="!mapping.editMode" [attr.tabindex]="getTabIndex(mapping)"
+            [ngClass]="{'read-only': !mapping.editMode,'editMode' : mapping.editMode}"
+            (keypress)="updateMappingKeyPress($event,mapping)"
+            >
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="row outer">
+            <label class="vert-center left-text">Size:</label>
+            <input class="read-only field" [(ngModel)]="mapping.size" readonly>
+            <label class="vert-center left-text"></label>
+            <input class="read-only field"  readonly>
+          </div>
+        </div>
+        <table class="table table-hover">
+          <thead class="thead-dark thead-custom">
+            <tr>
+              <th class="thead-custom pair-entry">Field To Keep</th>
+              <th class="thead-custom"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let field of mapping.fieldsToKeep; let i = index; trackBy: trackByIdx">
+              <td class="pair-entry">
+                <input class="read-only" [(ngModel)]="mapping.fieldsToKeep[i]"
+                [readonly]="!mapping.editMode" [attr.tabindex]="getTabIndex(mapping)"
+                [ngClass]="{'read-only': !mapping.editMode,'editMode' : mapping.editMode}"
+                (keypress)="updateMappingKeyPress($event,mapping)"
+                >
+              </td>
+            <td>
+              <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(mapping)" (click)="removeField(mapping,field)" (keypress)="removeField(mapping,field)">
+                <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+                <i class="fas fa-stack-1x fa-trash fa-inverse" aria-hidden="true"></i>
+              </span>
+            </td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="table table-hover" *ngIf="mapping.urlParams.length>0">
+          <thead class="thead-dark thead-custom">
+            <tr>
+              <th class="thead-custom pair-entry">Param Key</th>
+              <th class="thead-custom pair-entry">Param Value</th>
+              <th class="thead-custom"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let param of mapping.urlParams">
+              <td class="pair-entry">
+                <input class="read-only" [(ngModel)]="param.key"
+                [readonly]="!mapping.editMode" [attr.tabindex]="getTabIndex(mapping)"
+                [ngClass]="{'read-only': !mapping.editMode,'editMode' : mapping.editMode}"
+                (keypress)="updateMappingKeyPress($event,mapping)"
+                >
+              </td>
+              <td class="pair-entry">
+                <input class="read-only" [(ngModel)]="param.value"
+                [readonly]="!mapping.editMode" [attr.tabindex]="getTabIndex(mapping)"
+                [ngClass]="{'read-only': !mapping.editMode,'editMode' : mapping.editMode}"
+                (keypress)="updateMappingKeyPress($event,mapping)"
+                >
+              </td>
+            <td>
+              <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(mapping)" (click)="removeParam(mapping,param)" (keypress)="removeParam(mapping,param)">
+                <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+                <i class="fas fa-stack-1x fa-trash fa-inverse" aria-hidden="true"></i>
+              </span>
+            </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

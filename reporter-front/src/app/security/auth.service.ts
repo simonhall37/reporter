@@ -5,16 +5,16 @@ import {environment} from '../../environments/environment';
 import { Observable } from 'rxjs';
 import {User} from './user';
 
-const APIurl: string = environment.API;
+const baseURL: string = environment.BaseUrl;
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     constructor(private http: HttpClient) { }
 
     login(userName: string, password: string) {
-        return this.http.post<Observable<boolean>>(APIurl + 'login', { userName, password })
+        return this.http.post<Observable<boolean>>(baseURL + 'login', { userName, password })
             .pipe(map(isValid => {
-                // login successful if there's a user in the response
+
                 if (isValid) {
                     // store user details and basic auth credentials in local storage
                     // to keep user logged in between page refreshes

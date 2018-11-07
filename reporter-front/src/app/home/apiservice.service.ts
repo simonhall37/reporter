@@ -3,7 +3,8 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-const API = environment.API;
+const BASE = environment.BaseUrl;
+const API = BASE + environment.API;
 
 @Injectable({
   providedIn: 'root'

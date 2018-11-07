@@ -21,10 +21,10 @@
   <!-- lookups -->
   <div class="box row" *ngFor="let lookup of lookups">
     <div class="box-title col-12 row">
-      <div class="col-sm-10">
+      <div class="col-sm-6">
         <h4>{{lookup.name}}</h4>
       </div>
-      <div class="col-sm-2">
+      <div class="col-sm-6">
         <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(lookup)" (click)="removeLookup(lookup)" (keypress)="removeLookup(lookup)">
           <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
           <i class="fas fa-stack-1x fa-trash fa-inverse" aria-hidden="true"></i>
