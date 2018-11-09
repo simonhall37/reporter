@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders,   } from "@angular/common/http";
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -27,6 +27,11 @@ export class ApiService {
 
   public postObject(adr: string,item: any){
     return this.httpClient.post<any>(API + adr,item);
+  }
+
+  public postAndReceiveFile(adr: string, item: any){
+    let headers = new HttpHeaders({  })
+    return this.httpClient.post(API + adr,item,{headers: headers, responseType: 'blob'});
   }
 
 }
