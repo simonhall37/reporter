@@ -2,15 +2,30 @@ package com.simon.wa.domain.reports;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import com.simon.wa.domain.reports.columns.ColumnMetadata;
 import com.simon.wa.domain.reports.filters.FilterMetadata;
 
+@Entity
+@Table(name="report_metadata")
 public class ReportingMetadata {
 
+	@Id
+	@GeneratedValue
+	private long id;
+	
 	private String dataSource;
 	private String reportName;
 	private ReduceOps reductionType;
+	@OneToOne(targetEntity=ColumnMetadata.class, cascade=CascadeType.ALL)
 	private ColumnMetadata cols;
+	@OneToOne(targetEntity=FilterMetadata.class, cascade=CascadeType.ALL)
 	private FilterMetadata filter;
 	
 	public ReportingMetadata() {}
@@ -45,6 +60,14 @@ public class ReportingMetadata {
 		return sb.toString().substring(0,sb.length()-1);
 	}
 	
+	
+	public long getId() {
+		return this.id;
+	}
+	
+	public void setId(long id) {
+		this.id = id;
+	}
 	
 	public String getDataSource() {
 		return dataSource;
