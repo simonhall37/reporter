@@ -1,21 +1,53 @@
 package com.simon.wa.domain.reports.columns;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.simon.wa.domain.Pair;
 import com.simon.wa.domain.apiobject.ApiObject;
 import com.simon.wa.domain.reports.ReportColumn;
 
+@JsonTypeInfo(
+		  use = JsonTypeInfo.Id.NAME, 
+		  include = JsonTypeInfo.As.PROPERTY, 
+		  property = "type")
+		@JsonSubTypes({ 
+		  @Type(value = ColumnSimpleValue.class, name = "simple") ,
+		  @Type(value = ColumnCombine.class, name = "combine") ,
+		  @Type(value = ColumnLookup.class, name = "lookup") ,
+		  @Type(value = ColumnWeekNum.class, name = "weeknum")
+		})
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Table(name="column_def")
 public abstract class ColumnDefinition implements ReportColumn {
 
+	@Id
+	@GeneratedValue
+	private long id;
+	
 	private String columnType;
 	private String colName;
 	private boolean key;
-	private Map<String,Object> inputs;
 	private ColOutput outputType;
 	
+	@OneToMany(targetEntity = Pair.class, cascade=CascadeType.ALL)
+	private Set<Pair> inputs;
+	
 	public ColumnDefinition () {
-		this.setInputs(new HashMap<>());
+		this.setInputs(new HashSet<>());
 	}
 	
 	public ColumnDefinition(String colName,boolean key, ColOutput outputType) {
@@ -25,13 +57,19 @@ public abstract class ColumnDefinition implements ReportColumn {
 		this.setOutputType(outputType);
 	}
 	
-	public void addInput(String key, Object value) {
-		this.inputs.put(key, value);
+	public String getValue(String key) {
+		for (Pair p : this.inputs) {
+			if (p.getKey().equals(key)) return p.getValue();
+		}
+		return null;
+	}
+	
+	public void addInput(String key, String value) {
+		this.inputs.add(new Pair(key, value));
 	}
 	
 	public abstract Object generateValue(ApiObject input);
 	
-	@Override
 	public Object outputValue(ApiObject input) {
 		Object initial = generateValue(input);
 		if (initial instanceof java.lang.String) {
@@ -70,11 +108,11 @@ public abstract class ColumnDefinition implements ReportColumn {
 		this.columnType = type;
 	}
 
-	public Map<String,Object> getInputs() {
+	public Set<Pair> getInputs() {
 		return inputs;
 	}
 
-	public void setInputs(Map<String,Object> inputs) {
+	public void setInputs(Set<Pair> inputs) {
 		this.inputs = inputs;
 	}
 
@@ -100,6 +138,14 @@ public abstract class ColumnDefinition implements ReportColumn {
 
 	public void setOutputType(ColOutput outputType) {
 		this.outputType = outputType;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	} 
 
 }

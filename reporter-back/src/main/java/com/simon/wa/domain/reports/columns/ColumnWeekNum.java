@@ -4,9 +4,14 @@ import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 import com.simon.wa.domain.apiobject.ApiObject;
 import com.simon.wa.domain.reports.ReportColumn;
 
+@Entity
+@Table(name="col_weeknum")
 public class ColumnWeekNum extends ColumnDefinition implements ReportColumn {
 
 	public ColumnWeekNum() {
@@ -24,9 +29,9 @@ public class ColumnWeekNum extends ColumnDefinition implements ReportColumn {
 
 		String inputValue = null;
 		try {
-			inputValue = input.getValue((String) this.getInputs().get("field"), String.class);
+			inputValue = input.getValue((String)getValue("field"), String.class);
 		} catch (NullPointerException e) {
-			System.out.println("Couldn't find field " + this.getInputs().get("inputFieldName"));
+			System.out.println("Couldn't find field " + getValue("inputFieldName"));
 			return "";
 		}
 
