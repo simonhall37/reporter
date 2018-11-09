@@ -1,3 +1,220 @@
-<p>
-  report works!
-</p>
+<div>
+  <!-- add Report -->
+  <div class="box row">
+    <form class="form-inline">
+      <div class="col-12">
+        <div class="row">
+          <div class="col-sm-3 form-control-parent">
+            <input type="text" name="reportName" class="form-control" tabindex="1" [(ngModel)]="newReportMeta.reportName" placeholder="Report Name...">
+          </div>
+          <div class="col-sm-3 form-control-parent">
+            <select class="form-control"  id="dataSource" tabindex="1"
+                   [(ngModel)]="newReportMeta.dataSource" name="dataSource">
+               <option value="" disabled selected="selected">Data Source...</option>
+               <option *ngFor="let source of objectNames" [value]="source">{{source}}</option>
+             </select>
+           </div>
+           <div class="col-sm-3 form-control-parent">
+             <select class="form-control"  id="reductionType" tabindex="1"
+                    [(ngModel)]="newReportMeta.reductionType" name="reductionType">
+              <option value="" disabled selected="selected">Reduction...</option>
+              <option *ngFor="let reduceOp of getEnum('ReduceOps')" [value]="reduceOp">{{reduceOp}}</option>
+            </select>
+          </div>
+          <div class="col-sm-2 outer">
+            <div>
+              <span class="fa-stack fa btn-fa vert-center" tabindex="1" (click)="addReportMeta()" (keypress)="addReportMetaKeyPress($event)">
+                <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+                <i class="fas fa-plus fa-stack-1x fa-inverse" aria-hidden="true"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Reports -->
+  <div class="box row" *ngFor="let report of reportMetas">
+    <div class="box-title col-12 row">
+      <div class="col-sm-6">
+        <h4>{{report.reportName}}</h4>
+      </div>
+      <div class="col-sm-6">
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(report)" (click)="removeReportMeta(report)" (keypress)="removeReportMeta(report)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-trash fa-inverse" aria-hidden="true"></i>
+        </span>
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(report)" (click)="toggleEditMode(report)" (keypress)="toggleEditMode(report)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-inverse" aria-hidden="true"
+              [ngClass]="{'fa-pencil-alt': !report.editMode,'fa-check' : report.editMode}"
+          ></i>
+        </span>
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(report)" (click)="downloadFile(report)" (keypress)="executeQuery(report)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-inverse" aria-hidden="true"
+              [ngClass]="{'fa-play': !report.running,'fa-spinner fa-spin': report.running}"
+          ></i>
+        </span>
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(report)" (click)="addFilter(report)" (keypress)="addFilter(report)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-filter fa-inverse" aria-hidden="true"></i>
+        </span>
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(report)" (click)="addColumn(report)" (keypress)="addColumn(report)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-columns fa-inverse" aria-hidden="true"></i>
+        </span>
+        <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(report)" (click)="hideReportMeta(report)" (keypress)="hideReportMeta(report)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-inverse" aria-hidden="true"
+              [ngClass]="{'fa-eye-slash': !report.hide,'fa-eye' : report.hide}"
+          ></i>
+        </span>
+      </div>
+    </div>
+    <div *ngIf="!report.hide" class="container">
+      <div class="form-group row">
+        <label for="dataSource" class="col-sm-2 col-form-label">Data:</label>
+        <div class="col-sm-4">
+          <input class="read-only field form-control" [(ngModel)]="report.dataSource" readonly id="dataSource">
+        </div>
+        <label for="reduction" class="col-sm-2 col-form-label">Reduction:</label>
+        <div class="col-sm-4">
+          <input class="read-only field form-control" [(ngModel)]="report.reductionType" readonly id="reduction">
+        </div>
+      </div>
+      <!-- Filters -->
+      <div class="box row">
+        <div class="box-title col-sm-12 row">
+          <div class="col-sm-10">
+            <h4>Filters</h4>
+          </div>
+          <div class="col-sm-2">
+            <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(report)" (click)="hideFilters(report)" (keypress)="hideFilters(report)">
+              <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+              <i class="fas fa-stack-1x fa-inverse" aria-hidden="true"
+                  [ngClass]="{'fa-eye-slash': !report.filter.hide,'fa-eye' : report.filter.hide}"
+              ></i>
+            </span>
+          </div>
+        </div>
+        <div *ngIf="!report.filter.hide" class="col-sm-12">
+          <div class="form-group row  col-sm-12" *ngFor="let filter of report.filter.filters">
+            <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(report)" (click)="toggleFilterEditMode(filter,report)" (keypress)="toggleFilterEditMode(filter,report)">
+              <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+              <i class="fas fa-stack-1x fa-inverse" aria-hidden="true"
+                  [ngClass]="{'fa-pencil-alt': !filter.editMode,'fa-check' : filter.editMode}"
+              ></i>
+            </span>
+            <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(report)" (click)="removeFilter(report,filter)" (keypress)="removeFilter(report,filter)">
+              <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+              <i class="fas fa-stack-1x fa-trash fa-inverse" aria-hidden="true"></i>
+            </span>
+            <select class="form-control read-only col-sm-4"  id="filterType" [attr.tabindex]="getTabIndex(report)"
+                   [ngModel]="filter.type" name="filterType"
+                   [attr.tabindex]="getTabIndex(report)"
+                   [disabled]="!filter.editMode"
+                   [ngClass]="{'read-only': !filter.editMode,'editMode' : filter.editMode}"
+                   (ngModelChange)="setFilterType(filter,$event)"
+                   >
+             <option value="" disabled selected="selected">filter Type</option>
+             <option *ngFor="let filter of filterSummaries" [value]="filter.name">{{filter.name}}</option>
+           </select>
+            <div class="col-sm-6 container">
+              <div class="row" *ngFor="let pair of filter.inputs">
+                <label  class="col-sm-4 col-form-label">{{pair.key}}:</label>
+                <div class="col-sm-8">
+                  <input class="read-only" [(ngModel)]="pair.value"
+                  [readonly]="!filter.editMode" [attr.tabindex]="getTabIndex(report)"
+                  [ngClass]="{'read-only': !filter.editMode,'editMode' : filter.editMode}"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columns -->
+      <div class="box row">
+        <div class="box-title col-sm-12 row">
+          <div class="col-sm-10">
+            <h4>Columns</h4>
+          </div>
+          <div class="col-sm-2">
+            <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(report)" (click)="hideColumns(report)" (keypress)="hideColumns(report)">
+              <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+              <i class="fas fa-stack-1x fa-inverse" aria-hidden="true"
+                  [ngClass]="{'fa-eye-slash': !report.cols.hide,'fa-eye' : report.cols.hide}"
+              ></i>
+            </span>
+          </div>
+        </div>
+        <div *ngIf="!report.cols.hide" class="col-sm-12">
+          <div class="form-group col-sm-12 box" *ngFor="let column of report.cols.columns">
+
+              <div class="form-group row">
+                <label for="colName" class="col-sm-2 col-form-label">Name:</label>
+                <div class="col-sm-3">
+                  <input class="read-only" [(ngModel)]="column.colName"
+                  [readonly]="!column.editMode" [attr.tabindex]="getTabIndex(report)"
+                  [ngClass]="{'read-only': !column.editMode,'editMode' : column.editMode}"
+                  >
+                </div>
+                <label for="key" class="col-sm-2 col-form-label">Key:</label>
+                <div class="col-sm-3">
+                  <input class="read-only" [(ngModel)]="column.key"
+                  [readonly]="!column.editMode" [attr.tabindex]="getTabIndex(report)"
+                  [ngClass]="{'read-only': !column.editMode,'editMode' : column.editMode}"
+                  >
+                </div>
+                <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(report)" (click)="toggleColumnEditMode(column,report)" (keypress)="toggleColumnEditMode(column,report)">
+                  <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+                  <i class="fas fa-stack-1x fa-inverse" aria-hidden="true"
+                      [ngClass]="{'fa-pencil-alt': !column.editMode,'fa-check' : column.editMode}"
+                  ></i>
+                </span>
+                <span class="fa-stack fa btn-fa circle-button" [attr.tabindex]="getTabIndex(report)" (click)="removeColumn(report,column)" (keypress)="removeColumn(report,column)">
+                  <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+                  <i class="fas fa-stack-1x fa-trash fa-inverse" aria-hidden="true"></i>
+                </span>
+                <label for="outputType" class="col-sm-2 col-form-label">Output:</label>
+                <div class="col-sm-3">
+                  <input class="read-only" [(ngModel)]="column.outputType"
+                  [readonly]="!column.editMode" [attr.tabindex]="getTabIndex(report)"
+                  [ngClass]="{'read-only': !column.editMode,'editMode' : column.editMode}"
+                  >
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-6 container">
+                  <select class="form-control read-only col-sm-6"  id="columnType" [attr.tabindex]="getTabIndex(report)"
+                         [ngModel]="column.type" name="columnType"
+                         [attr.tabindex]="getTabIndex(report)"
+                         [disabled]="!column.editMode"
+                         [ngClass]="{'read-only': !column.editMode,'editMode' : column.editMode}"
+                         (ngModelChange)="setColumnType(column,$event)"
+                         >
+                   <option value="" disabled selected="selected">Column Type</option>
+                   <option *ngFor="let col of columnSummaries" [value]="col.name">{{col.name}}</option>
+                 </select>
+                </div>
+                <div class="col-sm-6 container">
+                  <div class="row" *ngFor="let pair of column.inputs">
+                    <label  class="col-sm-4 col-form-label">{{pair.key}}:</label>
+                    <div class="col-sm-8">
+                      <input class="read-only" [(ngModel)]="pair.value"
+                      [readonly]="!column.editMode" [attr.tabindex]="getTabIndex(report)"
+                      [ngClass]="{'read-only': !column.editMode,'editMode' : column.editMode}"
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

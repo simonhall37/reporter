@@ -1,0 +1,119 @@
+@import '../../variables';
+
+.form-inline {
+  width: 100%;
+}
+
+.col-form-label {
+  text-align: left;
+}
+
+.form-control-parent {
+  padding: 10px;
+}
+
+.form-group {
+  padding:20px;
+}
+
+.form-control {
+  width: 100%;
+  max-width: 400px;
+}
+
+.outer {
+  display: table;
+  width:100%;
+}
+
+input {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.row {
+  margin: 0px;
+}
+
+.box {
+  width: 100%;
+  border-style: solid;
+  border-width: thin;
+  border-color:  $primary;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.box-title{
+  padding:10px;
+}
+
+.vert-center {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.btn-fa {
+  color: $primary;
+}
+
+.btn-fa:hover {
+   color: lighten($primary, 10);
+}
+
+.thead-custom {
+  background-color: $primary !important;
+  border-color: white !important;
+}
+
+.field {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.field-label {
+  padding:20px;
+}
+
+.form-row {
+  padding: 20px;
+  margin:0px;
+}
+
+.pair-entry {
+  width: 500px;
+}
+
+.table tbody tr:hover td, .table tbody tr:hover th {
+  background-color: lighten($primary, 40);
+}
+
+.table {
+  width:80%;
+  margin-left:10%;
+  margin-right:10%;
+}
+
+.circle-button {
+  margin-right:10px;
+}
+
+.read-only {
+  border: 1px;
+  border-color: transparent;
+  border-style: solid;
+  background: none;
+  width: 100%;
+  max-width: 500px;
+}
+
+.editMode {
+  border: 1px;
+  border-color: lighten($primary, 40);
+  border-style: solid;
+  background: none;
+  width: 100%;
+  max-width: 500px;
+}
