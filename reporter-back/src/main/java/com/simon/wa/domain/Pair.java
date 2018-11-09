@@ -1,9 +1,20 @@
 package com.simon.wa.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="metadata_pairs")
 public class Pair {
 
+	@Id
+	@GeneratedValue
+	private long id;
+	
 	private String key;
-	private Object value;
+	private String value;
 	
 	public Pair() {}
 
@@ -11,7 +22,7 @@ public class Pair {
 		return key;
 	}
 	
-	public Pair(String key, Object value) {
+	public Pair(String key, String value) {
 		this.key = key;
 		this.value = value;
 	}
@@ -21,15 +32,23 @@ public class Pair {
 		return this.key + "=" + this.value;
 	}
 
+	public long getId() {
+		return this.id;
+	}
+	
+	public void setId(long id) {
+		this.id = id;
+	}
+	
 	public void setKey(String key) {
 		this.key = key;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return value;
 	}
 
-	public void setValue(Object value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 	

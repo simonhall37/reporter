@@ -5,7 +5,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +31,11 @@ import com.simon.wa.domain.reports.ReportColumn;
 import com.simon.wa.domain.reports.ReportingMetadata;
 import com.simon.wa.domain.reports.columns.ColOutput;
 import com.simon.wa.domain.reports.columns.ColumnCombine;
+import com.simon.wa.domain.reports.columns.ColumnDefinition;
 import com.simon.wa.domain.reports.columns.ColumnLookup;
 import com.simon.wa.domain.reports.columns.ColumnMetadata;
 import com.simon.wa.domain.reports.columns.ColumnSimpleValue;
+import com.simon.wa.domain.reports.filters.FilterDefinition;
 import com.simon.wa.domain.reports.filters.FilterMetadata;
 import com.simon.wa.domain.reports.filters.FilterNumeric;
 import com.simon.wa.domain.reports.filters.FilterTextContains;
@@ -41,6 +45,7 @@ import com.simon.wa.services.ApiObjectRepository;
 import com.simon.wa.services.ConnService;
 import com.simon.wa.services.CsvService;
 import com.simon.wa.services.LookupRepository;
+import com.simon.wa.services.ReportMetadataRepository;
 import com.simon.wa.services.ReportService;
 
 @RestController
@@ -64,6 +69,9 @@ public class ReporterBackApplication {
 	
 	@Autowired
 	private CsvService csvService;
+	
+	@Autowired
+	private ReportMetadataRepository reportRepo;
 	
 	ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	
@@ -89,19 +97,19 @@ public class ReporterBackApplication {
 		int userSize = this.objRepo.findByName("users").getSize();
 		if (userSize > 0) {
 			log.info(userSize + " users found");
-			Filterable filterC = new FilterTextContains("as", "firstname",true);
-			Filterable filterN = new FilterNumeric("id", NumComp.BETWEEN, 0, 900);
-			List<Filterable> filters = new ArrayList<>();
+			FilterDefinition filterC = new FilterTextContains("as", "firstname",true);
+			FilterDefinition filterN = new FilterNumeric("id", NumComp.BETWEEN, 0, 900);
+			Set<FilterDefinition> filters = new HashSet<>();
 			filters.add(filterC);
 			filters.add(filterN);
-			ReportColumn id = new ColumnSimpleValue("id", true, ColOutput.INTEGER, "id");
-			ReportColumn team = new ColumnLookup("team", true, ColOutput.STRING, "id", "teams", "Other");
+			ColumnDefinition id = new ColumnSimpleValue("id", true, ColOutput.INTEGER, "id");
+			ColumnDefinition team = new ColumnLookup("team", true, ColOutput.STRING, "id", "teams", "Other");
 //			ReportColumn fname = new ColumnSimpleValue("first_name", true, ColOutput.STRING, "firstname");
 			List<String> fields = new ArrayList<String>();
 			fields.add("firstname");
 			fields.add("lastname");
-			ReportColumn bname = new ColumnCombine("full_name", true, ColOutput.STRING, fields, ".");
-			List<ReportColumn> cols = new ArrayList<>();
+			ColumnDefinition bname = new ColumnCombine("full_name", true, ColOutput.STRING, fields, ".");
+			Set<ColumnDefinition> cols = new HashSet<>();
 			cols.add(id);
 			cols.add(team);
 			cols.add(bname);
@@ -113,6 +121,8 @@ public class ReporterBackApplication {
 			ReportingMetadata rMeta = new ReportingMetadata("users_report","users",ReduceOps.SUM);
 			rMeta.setFilter(fMeta);
 			rMeta.setCols(cMeta);
+			
+			this.reportRepo.save(rMeta);
 			
 			System.out.println(this.lookupRepo.count() + " lookups");
 			
