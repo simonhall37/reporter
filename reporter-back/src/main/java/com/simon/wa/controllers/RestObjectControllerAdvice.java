@@ -17,17 +17,24 @@ import org.springframework.hateoas.VndErrors;
 public class RestObjectControllerAdvice {
 
 	@ResponseBody
-    @ExceptionHandler(RestObjectNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    VndErrors bookNotFoundExceptionHandler(RestObjectNotFoundException ex) {
+	@ExceptionHandler(RestObjectNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	VndErrors notFoundExceptionHandler(RestObjectNotFoundException ex) {
+		return new VndErrors("error", ex.getMessage());
+	}
+
+	@ResponseBody
+	@ExceptionHandler(RestObjectAlreadyExistsException.class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	VndErrors alreadyExistsExceptionHandler(RestObjectAlreadyExistsException ex) {
+		return new VndErrors("error", ex.getMessage());
+	}
+
+	@ResponseBody
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    VndErrors badMetaExceptionHandler(IllegalArgumentException ex) {
         return new VndErrors("error", ex.getMessage());
     }
-	
-	 @ResponseBody
-	    @ExceptionHandler(RestObjectAlreadyExistsException.class)
-	    @ResponseStatus(HttpStatus.CONFLICT)
-	    VndErrors bookIsbnAlreadyExistsExceptionHandler(RestObjectAlreadyExistsException ex) {
-	        return new VndErrors("error", ex.getMessage());
-	    }
 	
 }
