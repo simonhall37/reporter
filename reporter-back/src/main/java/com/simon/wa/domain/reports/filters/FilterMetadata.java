@@ -1,16 +1,30 @@
 package com.simon.wa.domain.reports.filters;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.simon.wa.domain.apiobject.ApiObject;
 
+@Entity
+@Table(name="filter_metadata")
 public class FilterMetadata {
 
-	private List<Filterable> filters;
+	@Id
+	@GeneratedValue
+	private long id;
+	
+	@OneToMany(targetEntity = FilterDefinition.class, cascade=CascadeType.ALL)
+	private Set<FilterDefinition> filters;
 	
 	public FilterMetadata() {
-		this.setFilters(new ArrayList<>());
+		this.setFilters(new HashSet<>());
 	}
 	
 	public boolean apply(ApiObject input) {
@@ -24,12 +38,20 @@ public class FilterMetadata {
 		return true;
 	}
 
-	public List<Filterable> getFilters() {
+	public Set<FilterDefinition> getFilters() {
 		return filters;
 	}
 
-	public void setFilters(List<Filterable> filters) {
+	public void setFilters(Set<FilterDefinition> filters) {
 		this.filters = filters;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 	
 	

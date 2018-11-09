@@ -1,7 +1,12 @@
 package com.simon.wa.domain.reports.filters;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 import com.simon.wa.domain.apiobject.ApiObject;
 
+@Entity
+@Table(name="filter_numeric")
 public class FilterNumeric extends FilterDefinition {
 	
 	public FilterNumeric() {
@@ -11,18 +16,18 @@ public class FilterNumeric extends FilterDefinition {
 	public FilterNumeric(String fieldToCheck, NumComp comp, int lowerValue, int upperValue) {
 		this();
 		this.addInput("fieldToCheck", fieldToCheck);
-		this.addInput("comp", comp);
-		this.addInput("lowerValue", lowerValue);
-		this.addInput("upperValue", upperValue);
+		this.addInput("comp", comp.toString());
+		this.addInput("lowerValue", String.valueOf(lowerValue));
+		this.addInput("upperValue", String.valueOf(upperValue));
 	}
 	
 	@Override
 	public boolean apply(ApiObject input) {
 		int val;
 		String fieldToCheck = (String) getValue("fieldToCheck");
-		int lowerValue = (int) getValue("lowerValue");
-		int upperValue = (int) getValue("upperValue");
-		NumComp comp = (NumComp) getValue("comp");
+		int lowerValue = Integer.parseInt(getValue("lowerValue"));
+		int upperValue = Integer.parseInt(getValue("upperValue"));
+		NumComp comp = NumComp.valueOf(getValue("comp"));
 		try {
 			if (input.getValue(fieldToCheck, String.class)!=null && input.getValue(fieldToCheck, String.class).length()>0) {
 				val = Integer.parseInt(input.getValue(fieldToCheck, String.class));
