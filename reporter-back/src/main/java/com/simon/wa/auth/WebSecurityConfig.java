@@ -30,6 +30,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         	.and()
         	.httpBasic()
         	;
+        
+        // display the h2 console
+        http.headers().frameOptions().sameOrigin();
  
     }
  
