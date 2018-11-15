@@ -186,6 +186,13 @@
                   [ngClass]="{'read-only': !column.editMode,'editMode' : column.editMode}"
                   >
                 </div>
+                <label for="colNum" class="col-sm-2 col-form-label">Column Number:</label>
+                <div class="col-sm-3">
+                  <input class="read-only" [(ngModel)]="column.colNum"
+                  [readonly]="!column.editMode" [attr.tabindex]="getTabIndex(report)"
+                  [ngClass]="{'read-only': !column.editMode,'editMode' : column.editMode}"
+                  >
+                </div>
               </div>
               <hr>
               <div class="row">

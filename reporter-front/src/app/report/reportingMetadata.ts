@@ -30,6 +30,7 @@ export class ColumnDefinition {
   colName: string;
   key: boolean;
   outputType: ColType;
+  colNum: number;
   inputs: ReportPair[] = [];
   editMode: boolean = false;
 }
