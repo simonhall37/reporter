@@ -16,8 +16,8 @@ public class ColumnCombine extends ColumnDefinition {
 		super();
 	}
 	
-	public ColumnCombine(String colName, boolean key, ColOutput outputType, List<String> inputFieldNames,String delim) {
-		super(colName, key, outputType);
+	public ColumnCombine(String colName, boolean key, ColOutput outputType,int colNum , List<String> inputFieldNames,String delim) {
+		super(colName, key, outputType,colNum);
 		this.setColumnType("combine");
 		String fields = Arrays.toString(inputFieldNames.toArray());
 		fields = fields.substring(Math.min(fields.length(), 1), Math.max(0, fields.length()-1));

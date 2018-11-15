@@ -1,7 +1,8 @@
 package com.simon.wa.domain.reports.columns;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -24,10 +25,11 @@ public class ColumnMetadata {
 	private long id;
 	
 	@OneToMany(targetEntity = ColumnDefinition.class, cascade=CascadeType.ALL)
-	private Set<ColumnDefinition> columns;
+	@javax.persistence.OrderBy("colNum")
+	private SortedSet<ColumnDefinition> columns = new TreeSet<>();
 	
 	public ColumnMetadata() {
-		this.setColumns(new HashSet<>());
+
 	}
 	
 	public int numValueCols() {
@@ -71,7 +73,7 @@ public class ColumnMetadata {
 		return columns;
 	}
 
-	public void setColumns(Set<ColumnDefinition> columns) {
+	public void setColumns(SortedSet<ColumnDefinition> columns) {
 		this.columns = columns;
 	}
 	

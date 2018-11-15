@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,14 +104,14 @@ public class ReporterBackApplication {
 			Set<FilterDefinition> filters = new HashSet<>();
 			filters.add(filterC);
 			filters.add(filterN);
-			ColumnDefinition id = new ColumnSimpleValue("id", true, ColOutput.INTEGER, "id");
-			ColumnDefinition team = new ColumnLookup("team", true, ColOutput.STRING, "id", "teams", "Other");
+			ColumnDefinition id = new ColumnSimpleValue("id", true, ColOutput.INTEGER,2, "id");
+			ColumnDefinition team = new ColumnLookup("team", true, ColOutput.STRING,1, "id", "teams", "Other");
 //			ReportColumn fname = new ColumnSimpleValue("first_name", true, ColOutput.STRING, "firstname");
 			List<String> fields = new ArrayList<String>();
 			fields.add("firstname");
 			fields.add("lastname");
-			ColumnDefinition bname = new ColumnCombine("full_name", true, ColOutput.STRING, fields, ".");
-			Set<ColumnDefinition> cols = new HashSet<>();
+			ColumnDefinition bname = new ColumnCombine("full_name", true, ColOutput.STRING,3, fields, ".");
+			SortedSet<ColumnDefinition> cols = new TreeSet<>();
 			cols.add(id);
 			cols.add(team);
 			cols.add(bname);

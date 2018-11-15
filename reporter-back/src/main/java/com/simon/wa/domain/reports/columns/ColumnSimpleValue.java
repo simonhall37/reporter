@@ -13,8 +13,8 @@ public class ColumnSimpleValue extends ColumnDefinition {
 		super();
 	}
 	
-	public ColumnSimpleValue(String colName, boolean key, ColOutput outputType, String inputFieldName) {
-		super(colName, key, outputType);
+	public ColumnSimpleValue(String colName, boolean key, ColOutput outputType, int colNum, String inputFieldName) {
+		super(colName, key, outputType,colNum);
 		this.setColumnType("simple");
 		this.addInput("field", inputFieldName);
 	}

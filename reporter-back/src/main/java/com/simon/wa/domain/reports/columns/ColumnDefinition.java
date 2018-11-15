@@ -32,7 +32,7 @@ import com.simon.wa.domain.reports.ReportColumn;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name="column_def")
-public abstract class ColumnDefinition implements ReportColumn {
+public abstract class ColumnDefinition implements ReportColumn,Comparable<ColumnDefinition> {
 
 	@Id
 	@GeneratedValue
@@ -42,6 +42,7 @@ public abstract class ColumnDefinition implements ReportColumn {
 	private String colName;
 	private boolean key;
 	private ColOutput outputType;
+	private int colNum;
 	
 	@OneToMany(targetEntity = Pair.class, cascade=CascadeType.ALL)
 	private Set<Pair> inputs;
@@ -50,12 +51,18 @@ public abstract class ColumnDefinition implements ReportColumn {
 		this.setInputs(new HashSet<>());
 	}
 	
-	public ColumnDefinition(String colName,boolean key, ColOutput outputType) {
+	public ColumnDefinition(String colName,boolean key, ColOutput outputType, int colNum) {
 		this();
 		this.setColName(colName);
 		this.setKey(key);
 		this.setOutputType(outputType);
+		this.setColNum(colNum);
 	}
+	
+	 @Override
+	 public int compareTo(ColumnDefinition col) {
+		 return (this.colNum - col.colNum);
+	 }
 	
 	public String getValue(String key) {
 		for (Pair p : this.inputs) {
@@ -146,6 +153,14 @@ public abstract class ColumnDefinition implements ReportColumn {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public int getColNum() {
+		return colNum;
+	}
+
+	public void setColNum(int colNum) {
+		this.colNum = colNum;
 	} 
 
 }

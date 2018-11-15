@@ -18,8 +18,8 @@ public class ColumnWeekNum extends ColumnDefinition implements ReportColumn {
 		super();
 	}
 
-	public ColumnWeekNum(String colName, boolean key, ColOutput outputType, String inputFieldName) {
-		super(colName, key, outputType);
+	public ColumnWeekNum(String colName, boolean key, ColOutput outputType,int colNum, String inputFieldName) {
+		super(colName, key, outputType,colNum);
 		this.setColumnType("weeknum");
 		this.addInput("field", inputFieldName);
 	}

@@ -24,8 +24,8 @@ public class ColumnLookup extends ColumnDefinition {
 		super();
 	}
 	
-	public ColumnLookup(String colName, boolean key, ColOutput outputType, String inputFieldName,String lookupName, String defaultValue) {
-		super(colName, key, outputType);
+	public ColumnLookup(String colName, boolean key, ColOutput outputType,int colNum, String inputFieldName,String lookupName, String defaultValue) {
+		super(colName, key, outputType, colNum);
 		this.setColumnType("lookup");
 		this.addInput("field", inputFieldName);
 		this.addInput("lookup", lookupName);
