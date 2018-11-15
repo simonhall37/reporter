@@ -26,6 +26,8 @@ public class ReportService {
 	private ApiObjectRepository objRepo;
 	@Autowired
 	private LookupRepository lookupRepo;
+	@Autowired
+	private CsvService csvService;
 	
 	private static final Logger log = LoggerFactory.getLogger(ReportService.class);
 
@@ -41,7 +43,7 @@ public class ReportService {
 		if (input == null || input.size() == 0)
 			throw new IllegalArgumentException("Datasource doesn't exist or is empty");
 
-		log.info("Initial report data contains " + input.size() + " objects");
+		log.info("Initial " + meta.getReportName() + " data contains " + input.size() + " objects");
 		
 		// filter
 		List<ApiObject> filtered = input.stream().filter(o -> 
@@ -60,7 +62,7 @@ public class ReportService {
 			}
 		).collect(Collectors.toList());
 
-		log.info("Filtered data contains " + filtered.size() + " objects");
+		log.info("Filtered " + meta.getReportName() + " data contains " + filtered.size() + " objects");
 		meta.getCols().init(this.lookupRepo);
 		
 		// get values
@@ -80,10 +82,7 @@ public class ReportService {
 				}
 			).collect(Collectors.groupingBy(row -> row.getKeys(),TreeMap::new,Collectors.toCollection(ArrayList::new)));
 		
-		List<String> finalOutput = outputRows.entrySet().stream().map(e -> meta.reduce(e.getKey(),e.getValue())).collect(Collectors.toList());
-		
-		log.info(finalOutput.size() + " rows");
-		
+		List<String> finalOutput = outputRows.entrySet().stream().map(e -> meta.reduce(e.getKey(),e.getValue(),csvService)).collect(Collectors.toList());
 		return finalOutput;
 	}
 	

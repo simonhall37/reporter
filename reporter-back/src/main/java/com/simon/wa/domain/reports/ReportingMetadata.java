@@ -9,8 +9,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.simon.wa.domain.reports.columns.ColumnDefinition;
 import com.simon.wa.domain.reports.columns.ColumnMetadata;
 import com.simon.wa.domain.reports.filters.FilterMetadata;
+import com.simon.wa.services.CsvService;
 
 @Entity
 @Table(name="report_metadata")
@@ -36,7 +38,7 @@ public class ReportingMetadata {
 		this.reductionType = reductionType;
 	}
 	
-	public String reduce(ReportKey key, List<ReportRow> values) {
+	public String reduce(ReportKey key, List<ReportRow> values, CsvService csvService) {
 		
 		Double[] runningTotal = new Double[this.cols.numValueCols()];	
 		for (int i=0;i<runningTotal.length;i++) {
@@ -53,13 +55,19 @@ public class ReportingMetadata {
 			}
 		}
 		
-		StringBuilder sb = new StringBuilder(key + ",");
-		for (double i : runningTotal) {
-			sb.append(i+",");
-		}
-		return sb.toString().substring(0,sb.length()-1);
+		StringBuilder sb = new StringBuilder(csvService.toCsvLine(key.getValues()) + ",");
+		sb.append(csvService.toCsvLine(runningTotal));
+		return sb.toString();
 	}
 	
+	public String generateHeader(CsvService csvService) {
+		String[] colNames = new String[this.getCols().getColumns().size()];
+		int index = 0;
+		for (ColumnDefinition col : this.getCols().getColumns()) {
+			colNames[index++] = col.getColName();
+		}
+		return csvService.toCsvLine(colNames);
+	}
 	
 	public long getId() {
 		return this.id;

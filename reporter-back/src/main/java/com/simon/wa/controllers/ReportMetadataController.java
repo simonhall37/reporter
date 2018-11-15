@@ -27,6 +27,7 @@ import com.simon.wa.domain.reports.ReportResults;
 import com.simon.wa.domain.reports.ReportingMetadata;
 import com.simon.wa.exceptions.RestObjectAlreadyExistsException;
 import com.simon.wa.exceptions.RestObjectNotFoundException;
+import com.simon.wa.services.CsvService;
 import com.simon.wa.services.ReportMetadataRepository;
 import com.simon.wa.services.ReportService;
 
@@ -39,6 +40,9 @@ public class ReportMetadataController {
 	
 	@Autowired
 	private ReportService reportService;
+	
+	@Autowired
+	private CsvService csvService;
 	
 	@Autowired
 	private ReportMetadataRepository reportRepo;
@@ -54,9 +58,9 @@ public class ReportMetadataController {
 	@ResponseBody
 	public String executeReport(@Valid @RequestBody ReportingMetadata rMeta, HttpServletResponse response){
 		List<String> result = this.reportService.generateReport(rMeta);
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(rMeta.generateHeader(csvService));
 		for (String line : result) {
-			sb.append(line + "\n");
+			sb.append(System.getProperty("line.separator") + line);
 		}
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition","attachment; filename=\"" + rMeta.getReportName()+ "\"");
