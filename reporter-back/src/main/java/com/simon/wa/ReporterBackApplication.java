@@ -18,13 +18,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.simon.wa.auth.User;
+import com.simon.wa.auth.UserRepository;
 import com.simon.wa.domain.Lookup;
 import com.simon.wa.domain.apiobject.ApiObject;
 import com.simon.wa.domain.apiobject.MappingMetadata;
@@ -48,8 +47,6 @@ import com.simon.wa.services.LookupRepository;
 import com.simon.wa.services.ReportMetadataRepository;
 import com.simon.wa.services.ReportService;
 
-@RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @SpringBootApplication
 public class ReporterBackApplication {
 
@@ -71,6 +68,9 @@ public class ReporterBackApplication {
 	private CsvService csvService;
 	
 	@Autowired
+	private UserRepository userRepo;
+	
+	@Autowired
 	private ReportMetadataRepository reportRepo;
 	
 	ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -82,18 +82,22 @@ public class ReporterBackApplication {
 	@Bean
 	public CommandLineRunner run() throws Exception {
 		return args -> {
+			
+			loadDefaultUser();
+			
 			loadDummyLookups();
 			
 			generateUserReport();
 			
-//			printResponse("users", 2);
-//			printResponse("projects", 2);
-//			printResponse("time_entries", 2);
 			log.info("started");
 		};
 	}
 	
-	public void generateUserReport() {
+	private void loadDefaultUser() {
+		this.userRepo.save(new User("admin","pathfinder",System.getenv("RM_APIKEY")));
+	}
+	
+	private void generateUserReport() {
 		int userSize = this.objRepo.findByName("users").getSize();
 		if (userSize > 0) {
 			log.info(userSize + " users found");
@@ -104,7 +108,6 @@ public class ReporterBackApplication {
 			filters.add(filterN);
 			ColumnDefinition id = new ColumnSimpleValue("id", true, ColOutput.INTEGER,2, "id");
 			ColumnDefinition team = new ColumnLookup("team", true, ColOutput.STRING,1, "id", "teams", "Other");
-//			ReportColumn fname = new ColumnSimpleValue("first_name", true, ColOutput.STRING, "firstname");
 			List<String> fields = new ArrayList<String>();
 			fields.add("firstname");
 			fields.add("lastname");
@@ -203,20 +206,7 @@ public class ReporterBackApplication {
 		} catch (JsonProcessingException e) {
 			log.error("Error writing metadata to json",e);
 		}
-		
-//		@SuppressWarnings("unused")
-//		ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//		List<ApiObject> response = this.connService.getResponse(meta, meta.getUrlParams(),50);
-//		log.info(response.size() + " " + meta.getItemName() + " extracted, first " + limit + " ...");
-//		response.stream().limit(limit).forEach(o -> {
-//			log.info(o.getValue("id", String.class) + "," + o.getValue("project.name",String.class) + "," + o.getValue("spent_on",String.class) + "," + o.getValue("user.name", String.class) + "," + o.getValue("hours", Double.class));
-//		});
 
-	}
-
-	@GetMapping(value = "/message")
-	public String getMessage() {
-		return "{\"message\":\"backend\"}";
 	}
 
 }
