@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import {environment} from '../../environments/environment';
 import { Observable } from 'rxjs';
@@ -11,25 +11,27 @@ const baseURL: string = environment.BaseUrl;
 export class AuthService {
     constructor(private http: HttpClient) { }
 
-    login(userName: string, password: string) {
-        return this.http.post<Observable<boolean>>(baseURL + 'login', { userName, password })
+    login(username: string, password: string) {
+
+        let headers = new HttpHeaders({ 'Authorization':'Basic ' +  window.btoa(username + ':' + password)});
+        let options = { headers: headers };
+
+        return this.http.post<Observable<boolean>>(baseURL + 'login',{username,password},options)
             .pipe(map(isValid => {
 
                 if (isValid) {
-                    // store user details and basic auth credentials in local storage
-                    // to keep user logged in between page refreshes
                     let user:User = new User();
-                    user.authdata = window.btoa(userName + ':' + password);
+                    user.authdata = window.btoa(username + ':' + password);
                     localStorage.setItem('currentUser', JSON.stringify(user));
                 }
 
                 return isValid;
-            }));
+            }
+          ));
 
     }
 
     logout() {
-        // remove user from local storage to log user out
         localStorage.removeItem('currentUser');
     }
 }

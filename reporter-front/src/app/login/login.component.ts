@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {AuthService} from '../security/auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,7 @@ export class LoginComponent implements OnInit {
     model: any = {};
     badCred: boolean = false;
     returnUrl: string;
+    serverErr: boolean = false;
 
     constructor(
         private route: ActivatedRoute,
@@ -28,6 +30,7 @@ export class LoginComponent implements OnInit {
 
     login() {
       this.badCred = false;
+      this.serverErr = false;
         this.authService.login(this.model.username,this.model.password).subscribe(isValid => {
             if (isValid) {
                 this.router.navigate([this.returnUrl]);
@@ -35,6 +38,15 @@ export class LoginComponent implements OnInit {
             } else {
                 this.badCred = true;
             }
-        });
+        },
+        (err: HttpErrorResponse) => {
+          if (err.status === 401){
+            this.badCred = true;
+          }
+          else {
+            this.serverErr = true;
+          }
+        }
+      );
     }
 }
