@@ -18,17 +18,18 @@ export class AuthService {
 
         return this.http.post<Observable<boolean>>(baseURL + 'login',{username,password},options)
             .pipe(map(isValid => {
-
                 if (isValid) {
-                    let user:User = new User();
-                    user.authdata = window.btoa(username + ':' + password);
-                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    this.update(username,password);
                 }
-
                 return isValid;
             }
           ));
+    }
 
+    update(username: string, password: string){
+      let user:User = new User();
+      user.authdata = window.btoa(username + ':' + password);
+      localStorage.setItem('currentUser', JSON.stringify(user));
     }
 
     logout() {
