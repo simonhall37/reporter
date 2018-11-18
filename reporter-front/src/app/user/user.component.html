@@ -1,0 +1,57 @@
+<div class="box row">
+  <div class="box-title col-12 row">
+    <div class="col-sm-10">
+      <h4>Current Details</h4>
+    </div>
+    <div class="col-sm-2">
+      <span class="fa-stack fa btn-fa circle-button" (click)="toggleEditMode()" (keypress)="toggleEditMode()">
+        <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+        <i class="fas fa-stack-1x fa-inverse" aria-hidden="true"
+            [ngClass]="{'fa-pencil-alt': !user.editMode,'fa-check' : user.editMode}"
+        ></i>
+      </span>
+      <span class="fa-stack fa btn-fa circle-button" (click)="toggleResetPassword()" (keypress)="toggleResetPassword()">
+        <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+        <i class="fas fa-stack-1x fa-inverse" aria-hidden="true"
+            [ngClass]="{'fa-unlock': !passResetShow,'fa-lock' : passResetShow}"
+        ></i>
+      </span>
+    </div>
+  </div>
+  <div class="container">
+    <div class="form-group row">
+      <label for="username" class="col-sm-1 col-form-label">Name:</label>
+      <div class="col-sm-3">
+        <input class="read-only field form-control" [(ngModel)]="user.username" readonly id="username">
+      </div>
+      <label for="apikey" class="col-sm-1 col-form-label">key:</label>
+      <div class="col-sm-7">
+        <input class="read-only" [(ngModel)]="user.apikey"
+        [ngClass]="{'read-only': !user.editMode,'editMode' : user.editMode}"
+        [readonly]="!user.editMode" (keypress)="updateUserKeyPress($event)"
+        >
+      </div>
+    </div>
+    <div *ngIf="passResetShow" class="box">
+      <div class="form-group row">
+        <h6>Reset Password</h6>
+      </div>
+      <div class="form-group row">
+        <label for="pass1" class="col-sm-4 col-form-label">Password:</label>
+        <div class="col-sm-7">
+          <input class="pass"  [(ngModel)]="pass1" type="password" (keypress)="updatePasswordKeyPress($event)">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="pass2" class="col-sm-4 col-form-label">Repeat:</label>
+        <div class="col-sm-7">
+          <input class="pass"  [(ngModel)]="pass2" type="password" (keypress)="updatePasswordKeyPress($event)">
+        </div>
+        <span class="fa-stack fa btn-fa circle-button" (click)="updatePassword()" (keypress)="updatePasswordKeyPress($event)">
+          <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+          <i class="fas fa-stack-1x fa-check fa-inverse" aria-hidden="true"></i>
+        </span>
+      </div>
+    <div>
+  </div>
+</div>

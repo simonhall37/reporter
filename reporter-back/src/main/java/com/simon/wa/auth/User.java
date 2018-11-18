@@ -33,6 +33,11 @@ public class User {
 		return this;
 	}
 	
+	public User plainToHashedPass() {
+		this.password = new BCryptPasswordEncoder(11).encode(password);
+		return this;
+	}
+	
 	public long getId() {
 		return this.id;
 	}
@@ -60,11 +65,11 @@ public class User {
 		this.apikey = apikey;
 	}
 
-	public boolean isEnabled() {
-		return enabled;
-	}
-
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public boolean isEnabled() {
+		return this.enabled;
 	}
 }

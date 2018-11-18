@@ -43,8 +43,7 @@ public class CustomCorsFilter implements Filter {
 
 		final HttpServletRequest request = (HttpServletRequest) req;
 		String path = new UrlPathHelper().getPathWithinApplication(request);
-		boolean authenticated = SecurityContextHolder.getContext().getAuthentication()!=null;
-		logger.info(request.getRemoteAddr() + " accessing: " + path + " with " + request.getMethod() + " and auth status " + authenticated );
+		logger.info(request.getRemoteAddr() + " accessing: " + path + " with " + request.getMethod());
 
 		if (!request.getMethod().equals("OPTIONS")) {
 			chain.doFilter(req, res);
