@@ -11,6 +11,7 @@ import { LookupComponent } from './lookup/lookup.component';
 import { MappingComponent } from './mapping/mapping.component';
 import { ReportComponent } from './report/report.component';
 import { UserComponent } from './user/user.component';
+import { MainComponent } from './main/main.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { UserComponent } from './user/user.component';
     LookupComponent,
     MappingComponent,
     ReportComponent,
-    UserComponent
+    UserComponent,
+    MainComponent
   ],
   imports: [
     BrowserModule,
