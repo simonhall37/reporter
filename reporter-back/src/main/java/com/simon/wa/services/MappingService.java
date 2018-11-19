@@ -71,7 +71,6 @@ public class MappingService {
 		while (innerNodes.hasNext()) {
 			
 			Entry<String, JsonNode> pair = innerNodes.next();
-//			System.out.println("Checking: " + locToString(location) + "." + pair.getKey() + ": " + pair.getValue().asText());
 			
 			if (pair.getValue().getNodeType().equals(JsonNodeType.OBJECT)) {
 				location.add(pair.getKey());
@@ -81,8 +80,6 @@ public class MappingService {
 			
 			if (meta.getPathToId().equalsIgnoreCase(locToString(location) + "." + pair.getKey()))
 				obj.setId(pair.getValue().asLong());
-//			else if (meta.getPathToName().equalsIgnoreCase(locToString(location) + "." + pair.getKey()))
-//				obj.setName(pair.getValue().asText());
 			if (meta.getFieldsToKeep().contains(locToString(location) + "." + pair.getKey()))
 				obj.addField(pair.getKey(), pair.getValue().asText());
 		}
