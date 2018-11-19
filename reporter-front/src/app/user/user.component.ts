@@ -15,7 +15,7 @@ export class UserComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private messageService: MessageService
+    private messageService: MessageService,
     private authService: AuthService
   ) { }
 
