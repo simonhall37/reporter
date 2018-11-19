@@ -57,9 +57,6 @@ public class ReporterBackApplication {
 
 	@Autowired
 	private ConnService connService;
-
-	@Autowired
-	private ReportService repService;
 	
 	@Autowired
 	private ApiObjectRepository objRepo;
@@ -87,7 +84,7 @@ public class ReporterBackApplication {
 			
 			loadDummyLookups();
 			
-			generateUserReport();
+			loadDummyReport();
 			
 			log.info("started");
 		};
@@ -97,7 +94,7 @@ public class ReporterBackApplication {
 		this.userRepo.save(new User("admin","pathfinder",System.getenv("RM_APIKEY")));
 	}
 	
-	private void generateUserReport() {
+	private void loadDummyReport() {
 		int userSize = this.objRepo.findByName("users").getSize();
 		if (userSize > 0) {
 			log.info(userSize + " users found");
@@ -126,21 +123,6 @@ public class ReporterBackApplication {
 			rMeta.setCols(cMeta);
 			
 			this.reportRepo.save(rMeta);
-			
-			System.out.println(this.lookupRepo.count() + " lookups");
-			
-			List<String> result = this.repService.generateReport(rMeta);
-			
-			for (String record : result) {
-				System.out.println(record);
-			}
-			
-			try {
-				System.out.println(om.writerWithDefaultPrettyPrinter().writeValueAsString(rMeta));
-			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			
 		} else log.warn("Can't generate report as no users stored");
 	}

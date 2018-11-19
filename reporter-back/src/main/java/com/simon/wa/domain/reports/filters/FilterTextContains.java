@@ -29,7 +29,6 @@ public class FilterTextContains extends FilterDefinition {
 				return input.getValue(fieldToCheck, String.class).contains(shouldContain);
 			else return input.getValue(fieldToCheck, String.class).toLowerCase().contains(shouldContain.toLowerCase());
 		} catch (NullPointerException e) {
-			System.out.println("Filter contains couldn't find field " + fieldToCheck);
 			return false;
 		}
 		

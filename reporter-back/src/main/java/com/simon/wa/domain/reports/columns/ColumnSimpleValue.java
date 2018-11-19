@@ -24,7 +24,6 @@ public class ColumnSimpleValue extends ColumnDefinition {
 		try {
 			return input.getValue((String) getValue("field"), String.class);
 		} catch (NullPointerException e) {
-			System.out.println("Couldn't find field " + getValue("inputFieldName"));
 			return "";
 		}
 	}

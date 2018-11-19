@@ -43,7 +43,6 @@ public class ColumnMetadata {
 	public void init(LookupRepository lookupRepo) {
 		for (ReportColumn col : this.columns) {
 			if (col instanceof ColumnLookup) {
-				System.out.println("Must set lookup");
 				((ColumnLookup)col).addLookup(lookupRepo);
 			}
 		}

@@ -31,7 +31,6 @@ public class ColumnWeekNum extends ColumnDefinition implements ReportColumn {
 		try {
 			inputValue = input.getValue((String)getValue("field"), String.class);
 		} catch (NullPointerException e) {
-			System.out.println("Couldn't find field " + getValue("inputFieldName"));
 			return "";
 		}
 

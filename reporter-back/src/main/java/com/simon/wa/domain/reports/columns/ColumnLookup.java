@@ -34,7 +34,6 @@ public class ColumnLookup extends ColumnDefinition {
 	
 	public void addLookup(LookupRepository lookupRepo) {
 		this.lookup = lookupRepo.findByName((String)getValue("lookup")).get();
-		System.out.println("Lookup has " + this.lookup.getValues().size());
 	}
 	
 	@Override
