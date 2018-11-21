@@ -9,7 +9,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>TimeReporter</name>
+	<name>reporter</name>
 	<description>Redmine Time Reporter</description>
 
 	<properties>
@@ -25,8 +25,8 @@
 				<activeByDefault>true</activeByDefault>
 			 </activation>
 			 <modules>
-				<module>timereporter-front</module>
-				<module>timereporter-back</module>
+				<module>reporter-front</module>
+				<module>reporter-back</module>
 			</modules>
 		</profile>
 	</profiles>
