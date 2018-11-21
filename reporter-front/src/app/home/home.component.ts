@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {Message,Type} from './message';
 import {MessageService} from './message.service';
+import {AuthService} from '../security/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -9,7 +11,11 @@ import {MessageService} from './message.service';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private messageService: MessageService) {
+  constructor(
+    private messageService: MessageService,
+    private router: Router,
+    private authService: AuthService
+  ) {
     this.message = new Message(Type.SUCCESS,"");
     messageService.changeEmitted.subscribe(
         (message:Message) => {
@@ -38,5 +44,13 @@ export class HomeComponent implements OnInit {
 
   isSuccess():boolean{
     return this.message.type == Type.SUCCESS;
+  }
+
+  logout(){
+    this.authService.logout().subscribe(
+      (obj) => {
+        this.router.navigate(['/login']);
+      }
+    );
   }
 }

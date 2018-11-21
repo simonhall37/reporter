@@ -46,10 +46,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().cors().and()
         	.authorizeRequests()
-        		.anyRequest()
-        		.authenticated() 
+        	.antMatchers("/api/**").authenticated()
         	.and()
         		.httpBasic()
+//        	.and()
+//        		.logout().deleteCookies("JSESSIONID").invalidateHttpSession(true)
         	.and().
         		addFilterBefore(corsFilter, ChannelProcessingFilter.class)   	
         	;

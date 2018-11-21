@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient,HttpHeaders } from '@angular/common/http';
+import { HttpClient,HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import {environment} from '../../environments/environment';
 import { Observable } from 'rxjs';
@@ -13,10 +13,7 @@ export class AuthService {
 
     login(username: string, password: string) {
 
-        let headers = new HttpHeaders({ 'Authorization':'Basic ' +  window.btoa(username + ':' + password)});
-        let options = { headers: headers };
-
-        return this.http.post<Observable<boolean>>(baseURL + 'login',{username,password},options)
+        return this.http.post<Observable<boolean>>(baseURL + 'login',{username,password})
             .pipe(map(isValid => {
                 if (isValid) {
                     this.update(username,password);
@@ -32,7 +29,22 @@ export class AuthService {
       localStorage.setItem('currentUser', JSON.stringify(user));
     }
 
+    wipeToken(){
+      localStorage.removeItem('currentUser');
+    }
+
     logout() {
-        localStorage.removeItem('currentUser');
+        return this.http.post<Observable<boolean>>(baseURL + 'customLogout',null)
+          .pipe(map(
+            (obj) => {
+              this.wipeToken();
+              return true;
+            } ,
+            ( err: HttpErrorResponse) => {
+              console.error("Error!");
+              this.wipeToken();
+              console.log(err.status + " --- " + err.message);
+            }
+        ));
     }
 }

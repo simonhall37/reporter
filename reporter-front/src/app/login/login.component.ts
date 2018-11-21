@@ -24,8 +24,13 @@ export class LoginComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-      this.authService.logout();
-      this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/main';
+      this.authService.wipeToken();
+      // console.log("Return: " + this.route.snapshot.queryParams['returnUrl']);
+      // if (<string>this.route.snapshot.queryParams['returnUrl'] === '/'){
+      //   this.returnUrl = '/main';
+      // }
+      // this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/main';
+      this.returnUrl = "/main";
     }
 
     login() {
