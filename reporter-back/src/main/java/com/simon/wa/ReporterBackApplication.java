@@ -45,7 +45,6 @@ import com.simon.wa.services.ConnService;
 import com.simon.wa.services.CsvService;
 import com.simon.wa.services.LookupRepository;
 import com.simon.wa.services.ReportMetadataRepository;
-import com.simon.wa.services.ReportService;
 
 @SpringBootApplication
 public class ReporterBackApplication {
