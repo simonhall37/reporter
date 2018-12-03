@@ -1,9 +1,9 @@
 @echo off
 
-xcopy target\*.js ..\reporter-back\src\main\resources\static\
-xcopy target\*.map ..\reporter-back\src\main\resources\static\
-xcopy target\*.ico ..\reporter-back\src\main\resources\static\
-xcopy target\*.html ..\reporter-back\src\main\resources\static\
+xcopy /s target\*.js ..\reporter-back\src\main\resources\static\
+xcopy /s target\*.map ..\reporter-back\src\main\resources\static\
+xcopy /s target\*.ico ..\reporter-back\src\main\resources\static\
+xcopy /s target\*.html ..\reporter-back\src\main\resources\static\
 
 IF errorlevel 1 GOTO MOVE_FAILURE
 
