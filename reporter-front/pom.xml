@@ -6,7 +6,7 @@
 
 	<groupId>com.simon.wa</groupId>
 	<artifactId>reporter-front</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.2</version>
 	<packaging>pom</packaging>
 
 	<name>reporter-front</name>
