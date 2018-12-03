@@ -16,13 +16,213 @@
   	<project.root.name>reporter</project.root.name>
   </properties>
 
+	<profiles>
+		<profile>
+			<id>initial</id> <!-- clean the node_modules directory and re-install -->
+			 <build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-clean-plugin</artifactId>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>node_modules</directory>
+									<includes>
+										<include>**</include>
+									</includes>
+								</fileset>
+								<fileset>
+									<directory>../${project.root.name}-back/src/main/resources/static</directory>
+									<includes>
+										<include>*.js</include>
+										<include>*.ico</include>
+										<include>*.map</include>
+		                <include>*.txt</include>
+		                <include>*.html</include>
+									</includes>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
+					<plugin>
+						<artifactId>exec-maven-plugin</artifactId>
+						<groupId>org.codehaus.mojo</groupId>
+						<executions>
+							<execution>
+								<id>Install node modules</id>
+								<phase>initialize</phase>
+								<goals>
+								  <goal>exec</goal>
+								</goals>
+								<configuration>
+								  <executable>npm</executable>
+								  <arguments>
+										<argument>install</argument>
+								  </arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>locint</id> <!-- Local integration -->
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-clean-plugin</artifactId>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>../${project.root.name}-back/src/main/resources/static</directory>
+									<includes>
+										<include>*.js</include>
+										<include>*.ico</include>
+										<include>*.map</include>
+		                <include>*.txt</include>
+		                <include>*.html</include>
+									</includes>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
+					<plugin>
+		        <artifactId>exec-maven-plugin</artifactId>
+		        <groupId>org.codehaus.mojo</groupId>
+		        <executions>
+		          <execution>
+		            <id>Frontend Tests</id>
+		            <phase>test</phase>
+		            <goals>
+		              <goal>exec</goal>
+		            </goals>
+								<configuration>
+								 <executable>npm</executable>
+								 <arguments>
+									 <argument>run-script</argument>
+									 <argument>test-prod</argument>
+								 </arguments>
+							 </configuration>
+		          </execution>
+		          <execution>
+		            <id>Frontend Build</id>
+		            <phase>package</phase>
+		            <goals>
+		              <goal>exec</goal>
+		            </goals>
+		            <configuration>
+		              <executable>npm</executable>
+		              <arguments>
+		                <argument>run-script</argument>
+		                <argument>build-prod</argument>
+		              </arguments>
+		            </configuration>
+		          </execution>
+		          <execution>
+		            <id>Frontend Move</id>
+		            <phase>package</phase>
+		            <goals>
+		              <goal>exec</goal>
+		            </goals>
+		            <configuration>
+		              <executable>build.cmd</executable>
+		            </configuration>
+		          </execution>
+		        </executions>
+		      </plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>conint</id> <!-- Container integration -->
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-clean-plugin</artifactId>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>../${project.root.name}-back/src/main/resources/static</directory>
+									<includes>
+										<include>*.js</include>
+										<include>*.ico</include>
+										<include>*.map</include>
+		                <include>*.txt</include>
+		                <include>*.html</include>
+									</includes>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
+					<plugin>
+						<artifactId>exec-maven-plugin</artifactId>
+						<groupId>org.codehaus.mojo</groupId>
+						<executions>
+							<execution>
+								<id>Frontend Tests</id>
+								<phase>test</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+								 <executable>npm</executable>
+								 <arguments>
+									 <argument>run-script</argument>
+									 <argument>test-prod</argument>
+								 </arguments>
+							 </configuration>
+							</execution>
+							<execution>
+								<id>Frontend Build</id>
+								<phase>package</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>npm</executable>
+									<arguments>
+										<argument>run-script</argument>
+										<argument>build-prod</argument>
+									</arguments>
+								</configuration>
+							</execution>
+							<execution>
+								<id>Frontend Move</id>
+								<phase>package</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>build.cmd</executable>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
-      <plugin>
+    <!--  <plugin>
         <artifactId>exec-maven-plugin</artifactId>
         <groupId>org.codehaus.mojo</groupId>
         <executions>
-          <!--<execution>
+          <execution>
             <id>Frontend Tests</id>
             <phase>test</phase>
             <goals>
@@ -32,7 +232,7 @@
               <executable>bash</executable>
               <commandlineArgs>test.sh</commandlineArgs>
             </configuration>
-          </execution> -->
+          </execution>
           <execution>
             <id>Frontend Build</id>
             <phase>package</phase>
@@ -43,7 +243,7 @@
               <executable>npm</executable>
               <arguments>
                 <argument>run-script</argument>
-                <argument>build</argument>
+                <argument>build-prod</argument>
               </arguments>
             </configuration>
           </execution>
@@ -58,8 +258,8 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
+      </plugin> -->
+      <!-- <plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<configuration>
 					<filesets>
@@ -75,7 +275,8 @@
 						</fileset>
 					</filesets>
 				</configuration>
-			</plugin>
+			</plugin> -->
 		</plugins>
 	</build>
+
 </project>

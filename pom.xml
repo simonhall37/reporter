@@ -20,13 +20,16 @@
 
 	<profiles>
 		<profile>
-			<id>web</id>
-			 <activation>
-				<activeByDefault>true</activeByDefault>
-			 </activation>
+			<id>conint</id>
 			 <modules>
 				<module>reporter-front</module>
 				<module>reporter-back</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>initial</id>
+			 <modules>
+				<module>reporter-front</module>
 			</modules>
 		</profile>
 	</profiles>

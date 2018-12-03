@@ -15,13 +15,16 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.0.6.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath />
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+		<it.skip>false</it.skip>
+		<test.ip>127.0.0.1</test.ip>
+		<project.parent.name>reporter</project.parent.name>
 	</properties>
 
 	<dependencies>
@@ -41,6 +44,19 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-maven-plugin</artifactId>
+			<version>3.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -59,11 +75,268 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>locint</id> <!-- Local integration -->
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>exec-maven-plugin</artifactId>
+						<groupId>org.codehaus.mojo</groupId>
+						<executions>
+							<execution>
+								<id>e2e Tests</id>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>ng.cmd</executable>
+									<arguments>
+										<argument>e2e</argument>
+										<argument>--baseUrl=http://${test.ip}:8080</argument>
+										<argument>--dev-server-target=</argument>
+									</arguments>
+									<workingDirectory>../${project.parent.name}-front</workingDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<profiles>
+								<profile>locint</profile>
+							</profiles>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>repackage</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>pre-integration-test</id>
+								<goals>
+									<goal>start</goal>
+								</goals>
+								<configuration>
+									<skip>${it.skip}</skip>
+								</configuration>
+							</execution>
+							<execution>
+								<id>post-integration-test</id>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+								<configuration>
+									<skip>${it.skip}</skip>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>conint</id> <!-- Container integration -->
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>unpack</id>
+								<phase>package</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>${project.groupId}</groupId>
+											<artifactId>${project.artifactId}</artifactId>
+											<version>${project.version}</version>
+										</artifactItem>
+									</artifactItems>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.spotify</groupId>
+						<artifactId>dockerfile-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>build docker image</id>
+								<phase>package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>push docker image</id>
+								<phase>install</phase>
+								<goals>
+									<goal>push</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+							<repository>simonhall37/${project.parent.name}</repository>
+							<tag>${project.version}</tag>
+							<!-- <buildArgs> <JAR_FILE>${project.build.finalName}.jar</JAR_FILE> 
+								</buildArgs> -->
+						</configuration>
+
+					</plugin>
+					<plugin>
+						<artifactId>exec-maven-plugin</artifactId>
+						<groupId>org.codehaus.mojo</groupId>
+						<executions>
+							<execution>
+								<id>initial stop compose</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>docker-compose</executable>
+									<arguments>
+										<argument>stop</argument>
+									</arguments>
+									<workingDirectory>../docker</workingDirectory>
+								</configuration>
+							</execution>
+							<execution>
+								<id>remove container</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>rm-cont.cmd</executable>
+									<arguments>
+										<argument>${project.parent.name}</argument>
+									</arguments>
+								</configuration>
+							</execution>
+							<execution>
+								<id>start container</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>docker-compose</executable>
+									<arguments>
+										<argument>up</argument>
+										<argument>-d</argument>
+									</arguments>
+									<workingDirectory>../docker</workingDirectory>
+								</configuration>
+							</execution>
+							<execution>
+								<id>wait for container</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>dock-wait.cmd</executable>
+									<arguments>
+										<argument>10</argument>
+										<argument>60</argument>
+									</arguments>
+								</configuration>
+							</execution>
+							<execution>
+								<id>e2e Tests</id>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>ng.cmd</executable>
+									<arguments>
+										<argument>e2e</argument>
+										<argument>--baseUrl=http://${test.ip}:8080</argument>
+										<argument>--dev-server-target=</argument>
+									</arguments>
+									<workingDirectory>../${project.parent.name}-front</workingDirectory>
+								</configuration>
+							</execution>
+							<execution>
+								<id>stop container</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>docker-compose</executable>
+									<arguments>
+										<argument>stop</argument>
+									</arguments>
+									<workingDirectory>../docker</workingDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>deploy</id> <!-- Deploy -->
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>com.spotify</groupId>
+						<artifactId>dockerfile-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>default</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>push</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+							<repository>simonhall37/${project.parent.name}</repository>
+							<tag>${project.version}</tag>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<addResources>true</addResources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>3.4.1</version>
+				<configuration>
+					<propertyFile>src/main/resources/liquibase.properties</propertyFile>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
