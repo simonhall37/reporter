@@ -1,0 +1,25 @@
+version: "3"
+services:
+
+  post:
+    image: postgres:9.6-alpine
+    ports:
+      - "5432:5432"
+    environment:
+     - POSTGRES_PASSWORD=pathfinder
+    volumes:
+      - scripts:/scripts
+
+  reporter:
+    image: simonhall37/reporter:0.0.1-SNAPSHOT
+    ports:
+     - "8080:8080"
+    depends_on:
+     - post
+
+volumes:
+  scripts:
+    driver_opts:
+      type: none
+      device: /scripts
+      o: bind
