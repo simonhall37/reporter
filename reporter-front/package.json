@@ -5,9 +5,11 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --output-path=target",
-    "test": "ng test --watch=false",
+    "build-prod": "ng build --output-path=target --configuration=production --extract-css=false",
+    "test": "ng test",
+    "test-prod": "ng test --watch=false",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e --dev-server-target="
   },
   "private": true,
   "dependencies": {
