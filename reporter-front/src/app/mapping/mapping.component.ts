@@ -116,6 +116,7 @@ export class MappingComponent implements OnInit {
         mapping.running = false;
       },
       (err: HttpErrorResponse) => {
+        mapping.running = false;
         this.handleError(err);
       }
     );
