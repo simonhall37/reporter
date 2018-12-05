@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simon.wa.domain.apiobject.ApiObject;
@@ -73,7 +74,7 @@ public class ApiObjectRepository {
 		return false;
 	}
 	
-	public MappingMetadata save(MappingMetadata meta, boolean runQuery) {
+	public MappingMetadata save(MappingMetadata meta, boolean runQuery) throws IllegalArgumentException {
 		if (!initialized)
 			init();
 		
@@ -81,7 +82,13 @@ public class ApiObjectRepository {
 			log.warn("Removing " + meta.getItemName() + " from in memory cache and disk");
 		List<ApiObject> toInsert = new ArrayList<>(); 
 		if (runQuery)
-			toInsert = this.connService.getResponse(meta, meta.getUrlParams(), 2000);
+			try{
+				toInsert = this.connService.getResponse(meta, meta.getUrlParams(), 2000);
+			} catch (HttpClientErrorException e) {
+				log.error("Couldn't run query for " + meta.getItemName() + " - " + e.getMessage());
+				this.cache.put(meta, toInsert);
+				throw new IllegalArgumentException(e.getMessage());
+			}
 		this.cache.put(meta, toInsert);
 		if (!writeToDisk(meta.getItemName())) {
 			log.warn(meta.getItemName() + " - can't write to disk");
