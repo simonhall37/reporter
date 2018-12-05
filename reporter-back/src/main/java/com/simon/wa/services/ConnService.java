@@ -14,8 +14,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.simon.wa.auth.ExtendedUserDetailsService;
 import com.simon.wa.domain.Pair;
 import com.simon.wa.domain.apiobject.ApiObject;
 import com.simon.wa.domain.apiobject.MappingMetadata;
@@ -28,22 +30,26 @@ public class ConnService {
 	private final String FORMAT = "json";
 	private final int LIMIT = 100;
 	private final String tokenKey = "X-Redmine-API-Key";
-	private String apikey = "";
 	private RestTemplate restTemplate;
 	
 	@Autowired
 	private MappingService mapService;
+	
+	@Autowired
+	private ExtendedUserDetailsService userDetailsService;
 
 	private static final Logger log = LoggerFactory.getLogger(ConnService.class);
 
 	@Autowired
 	private RestTemplateBuilder builder;
 
-	private void findKey() {
-		this.apikey = System.getenv("RM_APIKEY");
-		if (this.apikey.length() == 0) {
-			log.error("Could not get API KEY from environment var");
+	private String getUserKey() {
+		try{
+			return this.userDetailsService.getCurrentUser().getApikey();
+		} catch (NullPointerException e) {
+			log.error("Coulsn't resolve the api key",e);
 		}
+		return null;
 	}
 
 	public String buildUrl(String type, List<Pair> params,int limit) {
@@ -60,8 +66,6 @@ public class ConnService {
 	public List<ApiObject> getResponse(MappingMetadata meta, List<Pair> params,int hardLimit) {
 
 		List<ApiObject> out = new ArrayList<>();
-		if (this.apikey.length() == 0)
-			findKey();
 		if (this.restTemplate == null)
 			this.restTemplate = builder.build();
 
@@ -83,6 +87,8 @@ public class ConnService {
 				log.info("Extracted " + count + " from " + this.URL + Arrays.toString(params.toArray()));
 			} catch (IOException e) {
 				log.error("Error extracting objects",e);
+			} catch (HttpClientErrorException e) {
+				log.error("Don't have permission to access the api with the apikey provided");
 			}
 			params.removeIf(p -> p.getKey().equals("offset"));
 		}
@@ -93,12 +99,12 @@ public class ConnService {
 
 	}
 	
-	private String getResponseAsString(String urlString) {
+	private String getResponseAsString(String urlString) throws HttpClientErrorException {
 		return restTemplate.exchange(urlString, HttpMethod.GET,
 				new HttpEntity<String>(new HttpHeaders() {
 					private static final long serialVersionUID = 4484749640306401240L;
 					{
-						set(tokenKey, apikey);
+						set(tokenKey, getUserKey());
 					}
 				}), String.class).getBody();
 	}
