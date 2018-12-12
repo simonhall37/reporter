@@ -21,6 +21,7 @@ export class UserComponent implements OnInit {
 
   apiAddress: string = "user";
   user: User;
+  updatingPass: boolean = false;
   passResetShow: boolean = false;
   pass1: string = "";
   pass2: string = "";
@@ -70,6 +71,7 @@ export class UserComponent implements OnInit {
       return;
     }
     this.user.password = this.pass1;
+    this.updatingPass = true;
     this.updateUser();
   }
 
@@ -100,7 +102,8 @@ export class UserComponent implements OnInit {
     this.apiService.putObject(this.apiAddress,this.user,"").subscribe(
       (obj) => {
         this.reportMessage(Type.SUCCESS,"User updated successfully!");
-        this.authService.update(this.user.username,this.user.password);
+        if (this.updatingPass)
+          this.authService.update(this.user.username,this.user.password);
       },
       (err: HttpErrorResponse) => {
         this.handleError(err);
@@ -108,6 +111,7 @@ export class UserComponent implements OnInit {
     );
     this.user.editMode = false;
     this.passResetShow = false;
+    this.updatingPass = false;
   }
 
 }
