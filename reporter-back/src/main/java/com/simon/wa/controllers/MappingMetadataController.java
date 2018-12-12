@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ import com.simon.wa.services.ApiObjectRepository;
 @RestController
 @RequestMapping(value = "/api/apiobjects")
 @CrossOrigin()
+@ControllerAdvice
 public class MappingMetadataController {
 
 	@Autowired
@@ -68,8 +70,9 @@ public class MappingMetadataController {
 	
 	@PostMapping("/{name}")
 	public ResponseEntity<?> executeQuery(@Valid @RequestBody MappingMetadata meta) {
-		MappingMetadata savedMeta = this.objRepo.save(meta, true);
+		MappingMetadata savedMeta = null;
 		HttpHeaders headers = new HttpHeaders();
+		savedMeta = this.objRepo.save(meta, true);
 		return new ResponseEntity<>(savedMeta, headers, HttpStatus.CREATED);
 	}
 
