@@ -1,5 +1,6 @@
 package com.simon.wa.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +36,7 @@ import com.simon.wa.services.ReportService;
 @RestController
 @RequestMapping(value = "/api/reports")
 @CrossOrigin()
+@ControllerAdvice
 public class ReportMetadataController {
 
 	private static final Logger log = LoggerFactory.getLogger(ReportMetadataController.class);
@@ -57,13 +60,24 @@ public class ReportMetadataController {
 	@PostMapping(path = "/{name}/csv")
 	@ResponseBody
 	public String executeReport(@Valid @RequestBody ReportingMetadata rMeta, HttpServletResponse response){
-		List<String> result = this.reportService.generateReport(rMeta);
-		StringBuilder sb = new StringBuilder(rMeta.generateHeader(csvService));
+		List<String> result = new ArrayList<>();
+		StringBuilder sb = new StringBuilder();
+		try{
+			result = this.reportService.generateReport(rMeta);
+			sb.append(rMeta.generateHeader(csvService));
+			
+		} catch (IllegalArgumentException e) {
+			log.error("Couldn't run report " + rMeta.getReportName());
+			sb.append(e.getMessage());
+			response.setHeader("error",e.getMessage());
+		}
+		
 		for (String line : result) {
 			sb.append(System.getProperty("line.separator") + line);
 		}
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition","attachment; filename=\"" + rMeta.getReportName()+ "\"");
+		
 		return sb.toString();
 	}
 	
