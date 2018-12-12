@@ -221,8 +221,8 @@ export class ReportComponent implements OnInit {
 
       },
       (err: HttpErrorResponse) => {
-        console.log(err);
         report.running = false;
+        console.log(err);
         this.handleError(err);
       }
     );
@@ -233,6 +233,7 @@ export class ReportComponent implements OnInit {
     this.apiService.postAndReceiveFile(this.apiAddress + '/' + report.reportName + '/csv',report).subscribe(
       (res) => {
         console.log('start download:',res);
+
           var url = window.URL.createObjectURL(res);
           var a = document.createElement('a');
           document.body.appendChild(a);
@@ -245,9 +246,10 @@ export class ReportComponent implements OnInit {
           this.reportMessage(Type.SUCCESS,"Report downloaded successfully (" + res.size + " bytes)");
           report.running = false;
         }, error => {
-          console.log('download error:', JSON.stringify(error));
-          this.handleError(error);
           report.running = false;
+          console.log('download error:', JSON.stringify(error));
+          let failure:Message = new Message(Type.ERROR,error.error[0].message);
+          this.messageService.emitChange(failure);
         }, () => {
           console.log('Completed file download.')
         }
