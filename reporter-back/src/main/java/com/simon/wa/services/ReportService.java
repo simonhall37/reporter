@@ -46,27 +46,36 @@ public class ReportService {
 		log.info("Initial " + meta.getReportName() + " data contains " + input.size() + " objects");
 		
 		// filter
-		List<ApiObject> filtered = input.stream().filter(o -> 
-			{
-				try{
-					return meta.getFilter().apply(o);
-				} catch (IllegalArgumentException e) {
-					ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-					try {
-						System.out.println(om.writerWithDefaultPrettyPrinter().writeValueAsString(o));
-					} catch (JsonProcessingException e1) {
-						e1.printStackTrace();
+		List<ApiObject> filtered = null;
+		try {
+			filtered = input.stream().filter(o -> 
+				{
+					try{
+						return meta.getFilter().apply(o);
+					} catch (IllegalArgumentException e) {
+						ObjectMapper om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+						try {
+							System.out.println(om.writerWithDefaultPrettyPrinter().writeValueAsString(o));
+						} catch (JsonProcessingException e1) {
+							e1.printStackTrace();
+						}
+						throw new IllegalArgumentException(e.getMessage());
 					}
-					throw new IllegalArgumentException(e.getMessage());
 				}
-			}
-		).collect(Collectors.toList());
+			).collect(Collectors.toList());
+		} catch (Exception e) {
+			log.error("Error filtering for report " + meta.getReportName() + " - " + e.getMessage());
+			throw new IllegalArgumentException(e.getMessage());
+		}
+		
 
 		log.info("Filtered " + meta.getReportName() + " data contains " + filtered.size() + " objects");
 		meta.getCols().init(this.lookupRepo);
 		
 		// get values
-		Map<ReportKey, List<ReportRow>> outputRows = filtered.stream().map(o -> 
+		Map<ReportKey, List<ReportRow>> outputRows = null;
+		try{
+			outputRows = filtered.stream().map(o -> 
 				{
 					try {
 						return meta.getCols().returnValues(o);
@@ -81,8 +90,20 @@ public class ReportService {
 					}
 				}
 			).collect(Collectors.groupingBy(row -> row.getKeys(),TreeMap::new,Collectors.toCollection(ArrayList::new)));
+		} catch (Exception e) {
+			log.error("Error generating values for report " + meta.getReportName() + " - " + e.getMessage());
+			throw new IllegalArgumentException(e.getMessage());
+		}
 		
-		List<String> finalOutput = outputRows.entrySet().stream().map(e -> meta.reduce(e.getKey(),e.getValue(),csvService)).collect(Collectors.toList());
+		// reduce
+		List<String> finalOutput = null;
+		try { 
+			finalOutput = outputRows.entrySet().stream().map(e -> meta.reduce(e.getKey(),e.getValue(),csvService)).collect(Collectors.toList());
+		} catch (Exception e) {
+			log.error("Error reducing values for report " + meta.getReportName() + " - " + e.getMessage());
+			throw new IllegalArgumentException(e.getMessage());
+		}
+		
 		return finalOutput;
 	}
 	
