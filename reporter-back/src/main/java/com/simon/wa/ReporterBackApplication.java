@@ -36,12 +36,22 @@ public class ReporterBackApplication {
 			
 			if (loadUser)
 				loader.loadDefaultUser();
+			try {
+				if (loadLookup)
+					loader.loadDummyLookups();
+			} catch (Exception e) {
+				log.error("An error was encountered loading default lookup",e);
+			}
 			
-			if (loadLookup)
-				loader.loadDummyLookups();
+			try {
+				if (loadReport)
+					loader.loadDummyReport();
+			} catch (Exception e) {
+				log.error("An error was encountered loading default report",e);
+			}
 			
-			if (loadReport)
-				loader.loadDummyReport();
+			
+			
 
 			log.info("started");
 		};
