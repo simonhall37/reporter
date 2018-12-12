@@ -77,6 +77,7 @@ public class UserController {
 
 	@PutMapping("api/user")
 	public ResponseEntity<User> updateUser(Principal principal, @Valid @RequestBody User user) {
+		log.info("Updating:" + user.getUsername());
 		if (principal.getName().equals(user.getUsername())) {
 			User oldUser = this.userRepo.findByUsername(user.getUsername());
 			if (oldUser == null)
